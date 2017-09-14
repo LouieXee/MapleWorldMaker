@@ -1,0 +1,22 @@
+{
+    presets: [
+        ["env", {
+            "targets": {
+                "browsers": ["last 2 versions"]
+            }
+        }],
+        "react"
+    ],
+    plugins: [
+        "babel-plugin-transform-async-to-generator",
+        "transform-object-rest-spread",
+        ["transform-runtime", {
+            "polyfill": false,
+            "regenerator": true,
+        }],
+        ['import', {
+            libraryName: 'antd',
+            style: true
+        }]
+    ]
+}
