@@ -1,0 +1,42 @@
+.panel {
+    color: #f0f0f0;
+    border-radius: 3px;
+    overflow: hidden;
+
+    &__header {
+        background: #424242;
+        border: 1px solid #383838;
+        border-bottom: none;
+        position: relative;
+        height: 26px;
+        line-height: 26px;
+        box-sizing: border-box;
+        padding: 0 28px 0 6px;
+        cursor: all-scroll;
+    }
+
+    &__close {
+        display: block;
+        width: 18px;
+        height: 18px;
+        text-align: center;
+        line-height: 18px;
+        color: #f0f0f0;
+        position: absolute;
+        right: 2px;
+        top: 50%;
+        margin-top: -9px;
+
+        &:hover {
+            color: #f0f0f0;
+            background: #333;
+        }
+    }
+
+    &__body {
+        background: #535353;
+        border: 1px solid #383838;
+        box-sizing: border-box;
+        padding: 6px;
+    }
+}

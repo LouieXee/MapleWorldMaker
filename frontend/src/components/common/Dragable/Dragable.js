@@ -2,8 +2,6 @@ import React from 'react';
 
 import { noop } from '../../../utils';
 
-const TRANSFORM_TRANSLATE3D_REG_EXP = /translate3d\((-?\d+)px[\w\s]*(-\d+)px[\w\s]*\)/;
-
 export default class Dragable extends React.Component {
 
     constructor (props) {
@@ -33,6 +31,8 @@ export default class Dragable extends React.Component {
         let currentPoint = { x: 0, y: 0 };
 
         const handleMouseDown = e => {
+            e.preventDefault();
+
             if (!this.state.dragable) {
                 return false;
             }
@@ -46,16 +46,18 @@ export default class Dragable extends React.Component {
             onDrag(firstPoint.x, firstPoint.y);
         };
         const handleMouseMove = e => {
-            currentPoint.x = e.pageX;
-            currentPoint.y = e.pageY;
+            e.preventDefault();
 
-            
+            dragable.style.transform = `translate3d(${currentPoint.x + (e.pageX - firstPoint.x)}px, ${currentPoint.y + (e.pageY - firstPoint.y)}px, 0)`;
 
-            dragable.style.transform = `translate3d(${currentPoint.x - firstPoint.x}px, ${currentPoint.y - firstPoint.y}px, 0)`;
-
-            onDraging(currentPoint.x, currentPoint.y);
+            onDraging(e.pageX, e.pageY);
         };
         const handleMouseUp = e => {
+            e.preventDefault();
+
+            currentPoint.x += e.pageX - firstPoint.x;
+            currentPoint.y += e.pageY - firstPoint.y;
+
             onDrop(e.pageX, e.pageY); 
 
             document.removeEventListener('mousemove', handleMouseMove);
@@ -77,14 +79,16 @@ export default class Dragable extends React.Component {
     }
 
     render () {
-        let { className, style } = this.props;
-        let dragableStyle = {
-            cursor: !this.state.dragable ? 'default' : ( this.state.draging ? '-webkit-grabbing' : '-webkit-grab' ),
+        let { style, className } = this.props;
+
+        style = {
+            cursor: !this.state.dragable ? 'default' :  '-webkit-grab',
+            position: 'relative',
             ...style
         };
 
         return (
-            <div ref="dragable" className={className} style={dragableStyle}>
+            <div className={className} ref="dragable" style={style}>
                 { this.props.children }
             </div>
         );

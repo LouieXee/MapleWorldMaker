@@ -10,8 +10,7 @@ export default class PanelMap extends React.Component {
         super(...arguments);
 
         this.state = {
-            dragable: false,
-            draging: false
+            dragable: false
         }
     }
 
