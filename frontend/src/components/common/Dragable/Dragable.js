@@ -28,7 +28,10 @@ export default class Dragable extends React.Component {
         let { dragable } = this.refs;
         let { onDrag = noop, onDraging = noop, onDrop = noop } = this.props;
         let firstPoint = { x: 0, y: 0 };
-        let currentPoint = { x: 0, y: 0 };
+        let currentPoint = { 
+            x: parseFloat(getComputedStyle(dragable).left),
+            y: parseFloat(getComputedStyle(dragable).top)
+        };
 
         const handleMouseDown = e => {
             e.preventDefault();
@@ -48,7 +51,8 @@ export default class Dragable extends React.Component {
         const handleMouseMove = e => {
             e.preventDefault();
 
-            dragable.style.transform = `translate3d(${currentPoint.x + (e.pageX - firstPoint.x)}px, ${currentPoint.y + (e.pageY - firstPoint.y)}px, 0)`;
+            dragable.style.left = `${currentPoint.x + (e.pageX - firstPoint.x)}px`;
+            dragable.style.top = `${currentPoint.y + (e.pageY - firstPoint.y)}px`;
 
             onDraging(e.pageX, e.pageY);
         };
@@ -83,7 +87,7 @@ export default class Dragable extends React.Component {
 
         style = {
             cursor: !this.state.dragable ? 'default' :  '-webkit-grab',
-            position: 'relative',
+            transform: 'translateZ(0)',
             ...style
         };
 

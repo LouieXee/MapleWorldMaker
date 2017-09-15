@@ -16,12 +16,16 @@ import Map from './models/Map';
 const { Header, Content } = Layout;
 
 const MAP = new Map({
-    edge,
-    ground,
-    slopeLeft,
-    slopeRight,
-    wallLeft,
-    wallRight
+    width: 1000,
+    height: 800,
+    textures: {
+        edge,
+        ground,
+        slopeLeft,
+        slopeRight,
+        wallLeft,
+        wallRight
+    }
 })
 
 export default class App extends React.Component {

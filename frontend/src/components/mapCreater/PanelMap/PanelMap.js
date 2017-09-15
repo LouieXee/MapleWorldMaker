@@ -1,5 +1,7 @@
 import React from 'react';
 
+import MapElement from '../MapElement';
+
 import Dragable from '../../common/Dragable';
 
 const SPACE_KEY_CODE = 32;
@@ -26,7 +28,7 @@ export default class PanelMap extends React.Component {
     }
 
     render () {
-        let { width, height } = this.props;
+        let { width, height, elements } = this.props;
 
         let style = {
             position: 'absolute',
@@ -70,6 +72,10 @@ export default class PanelMap extends React.Component {
             document.removeEventListener('keydown', _handleKeyDown);
             document.removeEventListener('keyup', _handleKeyUp);
         }
+    }
+
+    _createMapElements (elements) {
+        return elements.map(element => (<MapElement element={element} />))
     }
 
 }

@@ -1,7 +1,9 @@
 import React from 'react';
 
 import PanelMap from '../../components/mapCreater/PanelMap';
-import PanelElements from '../../components/mapCreater/PanelElements';
+import PanelTypes from '../../components/mapCreater/PanelTypes';
+
+import MapElement from '../../models/MapElement';
 
 export default class PageMapCreater extends React.Component {
 
@@ -9,7 +11,8 @@ export default class PageMapCreater extends React.Component {
         super(...arguments);
 
         this.state = {
-            isPanelElementsVisible: true
+            isPanelTypesVisible: true,
+            elements: []
         };
     }
 
@@ -18,18 +21,24 @@ export default class PageMapCreater extends React.Component {
 
         return (
             <div className="map-creater">
-                <PanelMap width={1000} height={800} />
-                <PanelElements 
-                    visible={this.state.isPanelElementsVisible} 
-                    map={map} 
+                <PanelMap 
+                    width={map.getWidth()} 
+                    height={map.getHeight()} 
+                    elements={this.state.elements} 
+                />
+                <PanelTypes 
+                    visible={this.state.isPanelTypesVisible} 
+                    types={map.getTypes()} 
                     onSelectElement={this._handleSelectElement.bind(this)}
                 />
             </div>
         );
     }
 
-    _handleSelectElement (type) {
-        
+    _handleSelectElement (element) {
+        this.setState({
+            elements: [...this.state.elements, new MapElement(element).setDragable(true)]
+        })
     }
 
 }

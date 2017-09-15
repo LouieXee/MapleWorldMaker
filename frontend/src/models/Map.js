@@ -1,6 +1,11 @@
 export default class Map {
 
-    constructor (imgs, opt = {}) {
+    constructor (opt = {}) {
+        const {
+            width,
+            height,
+            textures
+        } = opt;
         const {
             ground,
             edge,
@@ -8,7 +13,7 @@ export default class Map {
             slopeRight,
             wallLeft,
             wallRight
-        } = imgs;
+        } = textures;
         const {
             groundWidth = ground.width,
             groundHeight = ground.height,
@@ -19,42 +24,50 @@ export default class Map {
             wallHeight = wallLeft.height
         } = opt;
 
-        this._elements = {
+        this._width = width;
+        this._height = height;
+        this._types = {
             ground: {
                 type: 'GROUND',
-                imgs: {
+                textures: {
                     main: ground,
                     edge
                 },
+                groundWidth,
+                groundHeight,
+                edgeWidth,
+                slopGroundHeight
             },
             slope: {
                 type: 'SLOPE',
-                imgs: {
+                textures: {
                     left: slopeLeft,
                     right: slopeRight
-                }
+                },
+                slopeWidth,
+                slopeHeight
             },
             wall: {
                 type: 'WALL',
-                imgs: {
+                textures: {
                     left: wallLeft,
                     right: wallRight
-                }
+                },
+                wallHeight
             }
-        };
-        this._constant = {
-            groundWidth,
-            groundHeight,
-            edgeWidth,
-            slopGroundHeight,
-            slopeWidth,
-            slopeHeight,
-            wallHeight
         };
     }
 
-    getElements () {
-        return this._elements;
+    getWidth () {
+        return this._width;
+    }
+
+    getHeight () {
+        return this._height;
+    }
+
+    getTypes () {
+        return this._types;
     }
 
 }
