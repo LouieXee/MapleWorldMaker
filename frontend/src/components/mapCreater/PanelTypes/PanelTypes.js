@@ -23,17 +23,17 @@ export default class PanelElements extends React.Component {
     _createMapElements (types) {
         types = Object.keys(types).map(key => (types[key]));
 
-        return types.map(element => {
+        return types.map(type => {
             return (
-                <li key={element.type} className="panel-types__item">
+                <li key={type.type} className="panel-types__item">
                     <a 
                         href="javascript:;" 
                         className="panel-types__element" 
-                        onMouseDown={() => {
-                            this.props.onSelectElement(element);
+                        onMouseDown={e => {
+                            this.props.onSelectElement(type);
                         }}
                     >
-                        <img className="panel-types__texture" src={element.textures.main || element.textures.left} title={element.type} />
+                        <img className="panel-types__texture" src={type.textures.main || type.textures.left} title={type.type} />
                     </a>
                 </li>
             );
