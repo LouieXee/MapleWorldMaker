@@ -1,8 +1,6 @@
 import React from 'react';
 
-import MapElement from '../MapElement';
-
-import Dragable from '../../common/Dragable';
+import { Dragable } from '../../../utils';
 
 const SPACE_KEY_CODE = 32;
 
@@ -13,7 +11,7 @@ export default class PanelMap extends React.Component {
 
         this.state = {
             dragable: false
-        }
+        };
     }
 
     componentDidMount () {
@@ -37,21 +35,24 @@ export default class PanelMap extends React.Component {
             width,
             height,
             marginLeft: -width / 2, 
-            marginTop: -height / 2
+            marginTop: -height / 2,
+            cursor: this.state.dragable ? '-webkit-grab' : 'default'
         };
 
         return (
-            <Dragable style={style} dragable={this.state.dragable}>
-                <div className="panel-map">
-                    
-                </div>
-            </Dragable>
+            <div ref="panel" className="panel-map" style={style}>
+                <canvas></canvas>
+            </div>
         );
     }
 
     _setDragableListener () {
+        const dragable = new Dragable(this.refs.panel, {
+            available: false
+        })
         const _handleKeyDown = e => {
             if (e.keyCode == SPACE_KEY_CODE) {
+                dragable.setAvailable(true);
                 this.setState({
                     dragable: true
                 })
@@ -59,6 +60,7 @@ export default class PanelMap extends React.Component {
         };
         const _handleKeyUp = e => {
             if (e.keyCode == SPACE_KEY_CODE) {
+                dragable.setAvailable(false);
                 this.setState({
                     dragable: false
                 })
@@ -69,6 +71,7 @@ export default class PanelMap extends React.Component {
         document.addEventListener('keyup', _handleKeyUp);
 
         this._removeDragableListener = () => {
+            dragable.destroy();
             document.removeEventListener('keydown', _handleKeyDown);
             document.removeEventListener('keyup', _handleKeyUp);
         }

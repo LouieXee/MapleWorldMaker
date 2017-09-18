@@ -25,7 +25,18 @@ const MAP = new Map({
         slopeRight,
         wallLeft,
         wallRight
-    }
+    },
+    groundWidth: 90,
+    groundHeight: 27,
+    edgeWidth: 74,
+
+    slopGroundHeight: 26,
+    slopeWidth: 90,
+    slopeHeight: 86,
+    slopeLeftValue: - 2 / 3,
+    slopeRightValue: 2 / 3,
+
+    wallHeight: 60
 })
 
 export default class App extends React.Component {

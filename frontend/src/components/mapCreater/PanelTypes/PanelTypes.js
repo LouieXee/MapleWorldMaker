@@ -2,7 +2,9 @@ import React from 'react';
 
 import Panel from '../../common/Panel';
 
-export default class PanelElements extends React.Component {
+import MapElement from '../../../models/MapElement';
+
+export default class PanelTypes extends React.Component {
 
     constructor () {
         super(...arguments);
@@ -30,7 +32,7 @@ export default class PanelElements extends React.Component {
                         href="javascript:;" 
                         className="panel-types__element" 
                         onMouseDown={e => {
-                            this.props.onSelectElement(type);
+                            this.props.onSelectElement(new MapElement(type));
                         }}
                     >
                         <img className="panel-types__texture" src={type.textures.main || type.textures.left} title={type.type} />

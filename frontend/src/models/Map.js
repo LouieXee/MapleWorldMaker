@@ -4,7 +4,16 @@ export default class Map {
         const {
             width,
             height,
-            textures
+            textures,
+            groundWidth,
+            groundHeight,
+            edgeWidth,
+            slopGroundHeight,
+            slopeWidth,
+            slopeHeight,
+            slopeLeftValue,
+            slopeRightValue,
+            wallHeight
         } = opt;
         const {
             ground,
@@ -14,18 +23,10 @@ export default class Map {
             wallLeft,
             wallRight
         } = textures;
-        const {
-            groundWidth = ground.width,
-            groundHeight = ground.height,
-            edgeWidth = edge.width,
-            slopGroundHeight = slopeLeft.height - wallLeft.height,
-            slopeWidth = slopeLeft.width,
-            slopeHeight = slopeLeft.height,
-            wallHeight = wallLeft.height
-        } = opt;
 
         this._width = width;
         this._height = height;
+        this._textures = textures;
         this._types = {
             ground: {
                 type: 'GROUND',
@@ -36,7 +37,7 @@ export default class Map {
                 groundWidth,
                 groundHeight,
                 edgeWidth,
-                slopGroundHeight
+                deltaOfGroundAndSlope: slopGroundHeight - groundHeight
             },
             slope: {
                 type: 'SLOPE',
@@ -45,7 +46,9 @@ export default class Map {
                     right: slopeRight
                 },
                 slopeWidth,
-                slopeHeight
+                slopeHeight,
+                slopeLeftValue,
+                slopeRightValue
             },
             wall: {
                 type: 'WALL',
@@ -68,6 +71,10 @@ export default class Map {
 
     getTypes () {
         return this._types;
+    }
+
+    getTextures () {
+        return this._textures;
     }
 
 }
