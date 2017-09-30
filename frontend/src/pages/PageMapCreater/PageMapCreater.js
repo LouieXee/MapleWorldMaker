@@ -73,10 +73,12 @@ export default class PageMapCreater extends React.Component {
         let $texture = element.getTexture();
 
         const handleMouseMove = e => {
-            $proxy.style.left = `${e.pageX - $texture.width / 2}px`;
-            $proxy.style.top = `${e.pageY - $texture.height / 2}px`;
+            $proxy.style.left = `${e.clientX - $texture.width / 2}px`;
+            $proxy.style.top = `${e.clientY - $texture.height / 2}px`;
         };
         const handleMouseUp = e => {
+            $proxy.remove();
+
             document.removeEventListener('mousemove', handleMouseMove);
             document.removeEventListener('mouseup', handleMouseUp);
         };

@@ -30,7 +30,7 @@ const MAP = new Map({
     groundHeight: 27,
     edgeWidth: 74,
 
-    slopGroundHeight: 26,
+    slopeGroundHeight: 26,
     slopeWidth: 90,
     slopeHeight: 86,
     slopeLeftValue: - 2 / 3,

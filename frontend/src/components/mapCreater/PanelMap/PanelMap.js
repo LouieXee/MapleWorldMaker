@@ -1,21 +1,46 @@
+import { MapTexture } from 'maple-world';
 import React from 'react';
 
 import { Dragable } from '../../../utils';
+import SpriteMapElement from './SpriteMapElement';
 
 const SPACE_KEY_CODE = 32;
+
+const { Application } = PIXI;
 
 export default class PanelMap extends React.Component {
 
     constructor () {
         super(...arguments);
 
+        this._app = null;
+        this._stage = null;
         this.state = {
             dragable: false
         };
     }
 
+    componentWillReceiveProps (nextProps) {
+        let { elements = [] } = nextProps;
+    }
+
     componentDidMount () {
+        let { width, height, elements = [] } = this.props;
+
         this._setDragableListener();
+
+        this._app = new Application({
+            width,
+            height,
+            view: this.refs.stage
+        });
+        this._stage = this._app.stage;
+
+        for (let element of elements) {
+            let sprite = new SpriteMapElement(element);
+
+            this._stage.addChild(sprite);
+        }
     }
 
     componentWillUnmount () {
@@ -41,7 +66,7 @@ export default class PanelMap extends React.Component {
 
         return (
             <div ref="panel" className="panel-map" style={style}>
-                <canvas></canvas>
+                <canvas ref="stage"></canvas>
             </div>
         );
     }
@@ -75,10 +100,6 @@ export default class PanelMap extends React.Component {
             document.removeEventListener('keydown', _handleKeyDown);
             document.removeEventListener('keyup', _handleKeyUp);
         }
-    }
-
-    _createMapElements (elements) {
-        return elements.map(element => (<MapElement element={element} />))
     }
 
 }

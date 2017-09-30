@@ -8,7 +8,7 @@ export default class Map {
             groundWidth,
             groundHeight,
             edgeWidth,
-            slopGroundHeight,
+            slopeGroundHeight,
             slopeWidth,
             slopeHeight,
             slopeLeftValue,
@@ -29,7 +29,7 @@ export default class Map {
         this._textures = textures;
         this._types = {
             ground: {
-                type: 'GROUND',
+                type: 'ground',
                 textures: {
                     main: ground,
                     edge
@@ -37,10 +37,10 @@ export default class Map {
                 groundWidth,
                 groundHeight,
                 edgeWidth,
-                deltaOfGroundAndSlope: slopGroundHeight - groundHeight
+                deltaOfGroundAndSlope: slopeGroundHeight - groundHeight
             },
             slope: {
-                type: 'SLOPE',
+                type: 'slope',
                 textures: {
                     left: slopeLeft,
                     right: slopeRight
@@ -48,15 +48,17 @@ export default class Map {
                 slopeWidth,
                 slopeHeight,
                 slopeLeftValue,
-                slopeRightValue
+                slopeRightValue,
+                slopeGroundHeight
             },
             wall: {
-                type: 'WALL',
+                type: 'wall',
                 textures: {
                     left: wallLeft,
                     right: wallRight
                 },
-                wallHeight
+                wallHeight,
+                groundHeight
             }
         };
     }
