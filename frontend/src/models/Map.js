@@ -34,6 +34,8 @@ export default class Map {
                     main: ground,
                     edge
                 },
+                size: 1,
+                edge: 'none',
                 groundWidth,
                 groundHeight,
                 edgeWidth,
@@ -45,6 +47,8 @@ export default class Map {
                     left: slopeLeft,
                     right: slopeRight
                 },
+                size: 1,
+                dir: 'left',
                 slopeWidth,
                 slopeHeight,
                 slopeLeftValue,
@@ -57,6 +61,8 @@ export default class Map {
                     left: wallLeft,
                     right: wallRight
                 },
+                size: 1,
+                dir: 'left',
                 wallHeight,
                 groundHeight
             }

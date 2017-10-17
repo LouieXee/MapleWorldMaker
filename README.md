@@ -4,7 +4,6 @@
 
 * 拖拽过程中, 全局坐标和画布坐标的转化 ( 依靠 `getBoundingClientRect` 方法, 相对于视口做转化 );
 * 拖拽功能的封装;
-* 在开发Maker过程中发现 `Tiles` 的绘制逻辑同Game中的逻辑, 如果在Maker中再写一遍到时候可能要同时维护两份代码, 所以打算将其抽出, 新建一个 `MapleWorldCommon` 的模块;
 
 ## DEVELOPMENT LOG
 

@@ -16,13 +16,12 @@ export default class MapElement {
         } = element;
 
         this._id = getUniqueId();
+        this._x = 0;
+        this._y = 0;
         this._type = type;
         this._textures = textures;
         this._properties = { 
-            ...opts,
-            size: 1,
-            dir: 'left',
-            edge: 'none'
+            ...opts
         };
         this._mapTexture = new MapTexture(
             this._type, 
@@ -31,12 +30,30 @@ export default class MapElement {
         );
     }
 
-    getTexture () {
+    getCanvas () {
         return this._mapTexture.getCanvas();
+    }
+
+    getTexture () {
+        return this._mapTexture.getTexture();
     }
 
     getId () {
         return this._id;
+    }
+
+    getPosition () {
+        return {
+            x: this._x,
+            y: this._y
+        };
+    }
+
+    setPosition ({x, y}) {
+        this._x = x;
+        this._y = y;
+
+        return this;
     }
 
     _handleTextures (type, textures, opt) {

@@ -49,6 +49,7 @@ export default class PageMapCreater extends React.Component {
                     : (
                         <div>
                             <PanelMap 
+                                ref='map'
                                 width={map.getWidth()} 
                                 height={map.getHeight()} 
                                 elements={this.state.elements} 
@@ -66,35 +67,60 @@ export default class PageMapCreater extends React.Component {
         );
     }
 
+    _transformPositionFromGlobalToMap (ele) {
+        let eleData = ele.getBoundingClientRect();
+        let mapData = this.refs.map.refs.panel.getBoundingClientRect();
+
+        return {
+            x: eleData.left - mapData.left,
+            y: eleData.top - mapData.top
+        };
+    }
+
     _handleSelectElement (element) {
-        let elements = this.state.elements;
+        let { map } = this.props;
+        let { elements } = this.state;
         let $container = this.refs['proxy-container'];
         let $proxy = document.createElement('div');
-        let $texture = element.getTexture();
+        let $canvas = element.getCanvas();
 
         const handleMouseMove = e => {
-            $proxy.style.left = `${e.clientX - $texture.width / 2}px`;
-            $proxy.style.top = `${e.clientY - $texture.height / 2}px`;
+            $proxy.style.left = `${e.clientX - $canvas.width / 2}px`;
+            $proxy.style.top = `${e.clientY - $canvas.height / 2}px`;
+
+            element.setPosition(this._transformPositionFromGlobalToMap($proxy));
         };
         const handleMouseUp = e => {
-            $proxy.remove();
+            let pos = this._transformPositionFromGlobalToMap($proxy);
 
+            element.setPosition(pos);
+
+            if (pos.x >= 0 && pos.y >= 0 && pos.x <= map.getWidth() && pos.y <= map.getHeight()
+                && elements.filter(tmp => ( tmp.getId() == element.getId() )).length == 0) {
+
+                this.setState({
+                    elements: [...elements, element]
+                })
+            } else if (elements.find(tmp => ( tmp.getId() == element.getId() ))) {
+                elements = elements.filter(tmp => ( temp.getId() != element.getId() ));
+
+                this.setState({
+                    elements
+                })
+            }
+
+            $proxy.remove();
             document.removeEventListener('mousemove', handleMouseMove);
             document.removeEventListener('mouseup', handleMouseUp);
         };
 
-        if (elements.filter(tmp => (tmp.getId() == element.getId())).length == 0) {
-            this.setState({
-                elements: [...elements, element]
-            })
-        }
-
-        $proxy.appendChild($texture);
+        $proxy.appendChild($canvas);
         $proxy.style = `
             position: fixed;
-            left: -${$texture.width}px;
-            top: -${$texture.height}px;
+            left: -${$canvas.width}px;
+            top: -${$canvas.height}px;
             z-index: 1024;
+            opacity: .6;
         `;
 
         $container.appendChild($proxy);
