@@ -53,12 +53,13 @@ export default class PageMapCreater extends React.Component {
                                 width={map.getWidth()} 
                                 height={map.getHeight()} 
                                 elements={this.state.elements} 
+                                onDragElement={this._handleDragElement.bind(this)}
                                 onSelectElement={this._handleSelectElement.bind(this)}
                             />
                             <PanelTypes 
                                 visible={this.state.isPanelTypesVisible} 
                                 types={map.getTypes()} 
-                                onSelectElement={this._handleSelectElement.bind(this)}
+                                onDragElement={this._handleDragElement.bind(this)}
                             />
                         </div>
                     )
@@ -77,7 +78,7 @@ export default class PageMapCreater extends React.Component {
         };
     }
 
-    _handleSelectElement (element) {
+    _handleDragElement (element) {
         let { map } = this.props;
         let { elements } = this.state;
         let $container = this.refs['proxy-container'];
@@ -91,18 +92,21 @@ export default class PageMapCreater extends React.Component {
             element.setPosition(this._transformPositionFromGlobalToMap($proxy));
         };
         const handleMouseUp = e => {
+            $proxy.style.left = `${e.clientX - $canvas.width / 2}px`;
+            $proxy.style.top = `${e.clientY - $canvas.height / 2}px`;
+
             let pos = this._transformPositionFromGlobalToMap($proxy);
 
             element.setPosition(pos);
 
             if (pos.x >= 0 && pos.y >= 0 && pos.x <= map.getWidth() && pos.y <= map.getHeight()
-                && elements.filter(tmp => ( tmp.getId() == element.getId() )).length == 0) {
-
+             && elements.filter(tmp => ( tmp.getId() == element.getId() )).length == 0) {
                 this.setState({
                     elements: [...elements, element]
                 })
-            } else if (elements.find(tmp => ( tmp.getId() == element.getId() ))) {
-                elements = elements.filter(tmp => ( temp.getId() != element.getId() ));
+            } else if ((pos.x < 0 || pos.y < 0 || pos.x > map.getWidth() || pos.y > map.getHeight())
+             && elements.find(tmp => ( tmp.getId() == element.getId() ))) {
+                elements = elements.filter(tmp => ( tmp.getId() != element.getId() ));
 
                 this.setState({
                     elements
@@ -127,6 +131,10 @@ export default class PageMapCreater extends React.Component {
 
         document.addEventListener('mousemove', handleMouseMove);
         document.addEventListener('mouseup', handleMouseUp);
+    }
+
+    _handleSelectElement (element) {
+        
     }
 
 }

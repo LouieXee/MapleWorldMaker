@@ -1,7 +1,7 @@
 import { MapTexture } from 'maple-world';
 import React from 'react';
 
-import { Dragable } from '../../../utils';
+import { Dragable, Events } from '../../../utils';
 import Map from './Map';
 
 const SPACE_KEY_CODE = 32;
@@ -13,6 +13,7 @@ export default class PanelMap extends React.Component {
     constructor () {
         super(...arguments);
 
+        this._events = new Events();
         this.state = {
             dragable: false
         };
@@ -27,6 +28,7 @@ export default class PanelMap extends React.Component {
     componentDidMount () {
         this._setDragableListener();
         this._initMap();
+        this._bind();
     }
 
     componentWillUnmount () {
@@ -64,10 +66,21 @@ export default class PanelMap extends React.Component {
         let map = new Map({
             width,
             height,
-            view: this.refs.stage
+            view: this.refs.stage,
+            eventSys: this._events
         });
 
         this._map = map;
+    }
+
+    _bind () {
+        this._events.on('drag', element => {
+            this.props.onDragElement(element);
+        })
+
+        this._events.on('select', element => {
+            this.props.onSelectElement(element);
+        })
     }
 
     _setDragableListener () {

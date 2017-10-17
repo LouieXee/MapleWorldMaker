@@ -1,5 +1,7 @@
 import SpriteMapElement from './SpriteMapElement';
 
+import { Event } from '../../../../utils';
+
 const { Application } = PIXI;
 
 export default class Map {
@@ -8,7 +10,8 @@ export default class Map {
         const {
             width,
             height, 
-            view
+            view,
+            eventSys
         } = opt;
 
         this._app = new Application({
@@ -17,6 +20,7 @@ export default class Map {
             view
         });
         this._elements = [];
+        this._eventSys = eventSys;
 
         this._tick();
     }
@@ -29,10 +33,13 @@ export default class Map {
         let { stage } = this._app;
 
         this._elements = elements.map(element => {
-            return new SpriteMapElement(element);
+            return new SpriteMapElement(element, {
+                eventSys: this._eventSys
+            })
         });
         stage.removeChildren();
-        stage.addChild(...this._elements);
+
+        this._elements.length && stage.addChild(...this._elements);
     }
 
     _tick () {
