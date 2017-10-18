@@ -40,8 +40,13 @@ export default class PanelMap extends React.Component {
         this._map.destroy();
     }
 
+    shouldComponentUpdate () {
+        // 除非更新width或height, 否则不更新
+        return false;
+    }
+
     render () {
-        let { width, height, elements } = this.props;
+        let { width, height } = this.props;
 
         let style = {
             position: 'absolute',

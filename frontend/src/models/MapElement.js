@@ -1,6 +1,6 @@
 import { MapTexture } from 'maple-world';
 
-import { getUniqueId } from '../utils';
+import { getUniqueId, Events } from '../utils';
 
 const { autoDetectRenderer, Container, Sprite, Rectangle } = PIXI;
 const { TextureCache } = PIXI.utils;
@@ -28,6 +28,34 @@ export default class MapElement {
             this._handleTextures(this._type, this._textures, this._properties), 
             this._properties
         );
+        this._events = new Events();
+    }
+
+    onUpdate (callback) {
+        this._events.on('update', callback);
+
+        return () => {
+            this._events.off('update', callback);
+        };
+    }
+
+    updateProps (props) {
+        this._properties = {
+            ...this._properties,
+            ...props
+        };
+
+        this._mapTexture = new MapTexture(
+            this._type,
+            this._handleTextures(this._type, this._textures, this._properties),
+            this._properties
+        )
+
+        this._events.emit('update');
+    }
+
+    getProps () {
+        return this._properties;
     }
 
     getCanvas () {
@@ -40,6 +68,10 @@ export default class MapElement {
 
     getId () {
         return this._id;
+    }
+
+    getType () {
+        return this._type;
     }
 
     getPosition () {

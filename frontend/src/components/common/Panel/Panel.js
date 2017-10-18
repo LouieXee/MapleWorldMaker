@@ -42,13 +42,17 @@ export default class Panel extends React.Component {
                     }} 
                 >
                     { extra }
-                    <a href="javascript:;" className="panel__close"><Icon type="close" /></a>
+                    <a href="javascript:;" className="panel__close" onClick={this._handleClose.bind(this)}><Icon type="close" /></a>
                 </div>
                 <div className="panel__body">
                     { children }
                 </div>
             </div>
         );
+    }
+
+    _handleClose () {
+        this.props.onClose && this.props.onClose();
     }
 
 }

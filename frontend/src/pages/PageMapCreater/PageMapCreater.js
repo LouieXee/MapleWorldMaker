@@ -4,6 +4,7 @@ import { Spin } from 'antd';
 
 import PanelMap from '../../components/mapCreater/PanelMap';
 import PanelTypes from '../../components/mapCreater/PanelTypes';
+import PanelProperties from '../../components/mapCreater/PanelProperties';
 
 import MapElement from '../../models/MapElement';
 import { Dragable } from '../../utils';
@@ -18,6 +19,8 @@ export default class PageMapCreater extends React.Component {
         this.state = {
             isLoading: true,
             isPanelTypesVisible: true,
+            isPanelPropsVisible: false,
+            selectElement: null,
             elements: []
         };
     }
@@ -60,6 +63,11 @@ export default class PageMapCreater extends React.Component {
                                 visible={this.state.isPanelTypesVisible} 
                                 types={map.getTypes()} 
                                 onDragElement={this._handleDragElement.bind(this)}
+                            />
+                            <PanelProperties
+                                element={this.state.selectElement}
+                                visible={this.state.isPanelPropsVisible}
+                                onClose={this._handleClosePanelProps.bind(this)}
                             />
                         </div>
                     )
@@ -124,7 +132,7 @@ export default class PageMapCreater extends React.Component {
             left: -${$canvas.width}px;
             top: -${$canvas.height}px;
             z-index: 1024;
-            opacity: .6;
+            opacity: .4;
         `;
 
         $container.appendChild($proxy);
@@ -134,7 +142,17 @@ export default class PageMapCreater extends React.Component {
     }
 
     _handleSelectElement (element) {
-        
+        this.setState({
+            selectElement: element,
+            isPanelPropsVisible: true
+        })
+    }
+
+    _handleClosePanelProps () {
+        this.setState({
+            selectElement: null,
+            isPanelPropsVisible: false
+        })
     }
 
 }

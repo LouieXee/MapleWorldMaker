@@ -46,10 +46,7 @@ export class Dragable {
     _bind () {
         let $ele = this.$ele;
         let firstPoint = { x: 0, y: 0 };
-        let currentPoint = {
-            x: parseFloat(getComputedStyle($ele).left),
-            y: parseFloat(getComputedStyle($ele).top)
-        };
+        let currentPoint = { x: 0, y: 0 };
 
         const handleMouseDown = e => {
             e.preventDefault();
@@ -60,6 +57,11 @@ export class Dragable {
 
             firstPoint.x = e.clientX;
             firstPoint.y = e.clientY;
+
+            currentPoint = {
+                x: parseFloat(getComputedStyle($ele).left),
+                y: parseFloat(getComputedStyle($ele).top)
+            };
 
             document.addEventListener('mousemove', handleMouseMove);
             document.addEventListener('mouseup', handleMouseUp);
