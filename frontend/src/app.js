@@ -27,10 +27,9 @@ const MAP = new Map({
         wallRight
     },
     groundWidth: 90,
-    groundHeight: 27,
+    groundHeight: 26,
     edgeWidth: 74,
 
-    slopeGroundHeight: 26,
     slopeWidth: 90,
     slopeHeight: 86,
     slopeLeftValue: - 2 / 3,

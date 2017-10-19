@@ -8,7 +8,6 @@ export default class Map {
             groundWidth,
             groundHeight,
             edgeWidth,
-            slopeGroundHeight,
             slopeWidth,
             slopeHeight,
             slopeLeftValue,
@@ -38,8 +37,7 @@ export default class Map {
                 edge: 'none',
                 groundWidth,
                 groundHeight,
-                edgeWidth,
-                deltaOfGroundAndSlope: slopeGroundHeight - groundHeight
+                edgeWidth
             },
             slope: {
                 type: 'slope',
@@ -53,7 +51,7 @@ export default class Map {
                 slopeHeight,
                 slopeLeftValue,
                 slopeRightValue,
-                slopeGroundHeight
+                groundHeight
             },
             wall: {
                 type: 'wall',

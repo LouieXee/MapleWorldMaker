@@ -14,14 +14,17 @@ export default class PanelMap extends React.Component {
         super(...arguments);
 
         this._events = new Events();
+        this._elements = [];
         this.state = {
             dragable: false
         };
     }
 
+    // TODO 是否需要做更新判断
     componentWillReceiveProps (nextProps) {
         let { elements = [] } = nextProps;
 
+        this._elements = elements;
         this._map.setElements(elements);
     }
 

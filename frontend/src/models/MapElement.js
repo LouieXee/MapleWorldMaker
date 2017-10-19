@@ -21,14 +21,20 @@ export default class MapElement {
         this._type = type;
         this._textures = textures;
         this._properties = { 
+            zIndex: 0,
             ...opts
         };
+
         this._mapTexture = new MapTexture(
             this._type, 
             this._handleTextures(this._type, this._textures, this._properties), 
             this._properties
         );
         this._events = new Events();
+    }
+
+    getTexture () {
+        return this._mapTexture;
     }
 
     onUpdate (callback) {
@@ -58,14 +64,6 @@ export default class MapElement {
         return this._properties;
     }
 
-    getCanvas () {
-        return this._mapTexture.getCanvas();
-    }
-
-    getTexture () {
-        return this._mapTexture.getTexture();
-    }
-
     getId () {
         return this._id;
     }
@@ -81,9 +79,29 @@ export default class MapElement {
         };
     }
 
+    /*
+        @description 
+            一. 因为图像和逻辑需要, 拖拽得到的坐标和图像显示的坐标是有一定的便宜的;
+            二. 为了保证鼠标拖拽过程中, 希望保证拖拽效果, 所以偏移逻辑没有在MapTexture中处理
+    */
     setPosition ({x, y}) {
-        this._x = x;
-        this._y = y;
+        switch (this._type) {
+            case 'ground':
+                this._x = x;
+                this._y = y + (this._properties.groundHeight - this._mapTexture.children[0].height);
+                break;
+            case 'wall':
+                this._y = y - this._properties.groundHeight;
+                if (this._properties.dir == 'left') {
+                    this._x = x + this._mapTexture.children[0].width;
+                } else {
+                    this._x = x;
+                }
+                break;
+            default:
+                this._x = x;
+                this._y = y;
+        }
 
         return this;
     }

@@ -33,23 +33,26 @@ class PanelProperties extends React.Component {
             this.setState({
                 element: nextElement
             }, () => {
-                let { edge, size, dir } = nextElement.getProps();
+                let { edge, size, dir, zIndex } = nextElement.getProps();
 
                 switch (nextElement.getType()) {
                     case 'ground':
                         return this.props.form.setFieldsValue({
                             edge,
-                            size 
+                            size,
+                            zIndex
                         });
                     case 'slope':
                         return this.props.form.setFieldsValue({
                             dir,
-                            size 
+                            size,
+                            zIndex
                         });
                     case 'wall':
                         return this.props.form.setFieldsValue({
                             dir,
-                            size 
+                            size,
+                            zIndex
                         });
                 }
             })
@@ -85,6 +88,7 @@ class PanelProperties extends React.Component {
             }
 
             this.state.element.updateProps(values);
+            this.props.onClose && this.props.onClose();
         })
     }
 
@@ -139,6 +143,18 @@ class PanelProperties extends React.Component {
                         )
                     }
                 </FormItem>
+                <FormItem label="层级">
+                    {
+                        getFieldDecorator('zIndex', {
+                            rules: [{
+                                required: true,
+                                message: '层级不能为空!'
+                            }]
+                        })(
+                            <InputNumber placeholder="请输入层级" />
+                        )
+                    }
+                </FormItem>
             </Form>
         );
     }
@@ -175,6 +191,18 @@ class PanelProperties extends React.Component {
                         )
                     }
                 </FormItem>
+                <FormItem label="层级">
+                    {
+                        getFieldDecorator('zIndex', {
+                            rules: [{
+                                required: true,
+                                message: '层级不能为空!'
+                            }]
+                        })(
+                            <InputNumber placeholder="请输入层级" />
+                        )
+                    }
+                </FormItem>
             </Form>
         );
     }
@@ -208,6 +236,18 @@ class PanelProperties extends React.Component {
                                 <Radio value="left">向左</Radio>
                                 <Radio value="right">向右</Radio>
                             </Group>
+                        )
+                    }
+                </FormItem>
+                <FormItem label="层级">
+                    {
+                        getFieldDecorator('zIndex', {
+                            rules: [{
+                                required: true,
+                                message: '层级不能为空!'
+                            }]
+                        })(
+                            <InputNumber placeholder="请输入层级" />
                         )
                     }
                 </FormItem>

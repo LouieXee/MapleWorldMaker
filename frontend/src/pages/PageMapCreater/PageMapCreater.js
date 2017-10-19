@@ -91,7 +91,7 @@ export default class PageMapCreater extends React.Component {
         let { elements } = this.state;
         let $container = this.refs['proxy-container'];
         let $proxy = document.createElement('div');
-        let $canvas = element.getCanvas();
+        let $canvas = element.getTexture().toCanvas();
 
         const handleMouseMove = e => {
             $proxy.style.left = `${e.clientX - $canvas.width / 2}px`;

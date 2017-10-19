@@ -33,15 +33,6 @@ export default class SpriteMapElement extends Sprite {
         let timeoutId = 0;
         let { _spriteMain, _rect, _element } = this;
 
-        const removeUpdateListener = _element.onUpdate(() => {
-            this._setTexture();
-        });
-
-        this
-        .on('removed', () => {
-            removeUpdateListener();
-        })
-
         _spriteMain.interactive = true;
         _spriteMain.cursor = '-webkit-grab';
         _spriteMain
@@ -64,15 +55,39 @@ export default class SpriteMapElement extends Sprite {
     }
 
     _setTexture () {
-        let { _rect, _spriteMain } = this;
-        let texture = this._element.getTexture();
+        this._spriteMain = this._element.getTexture();
 
-        _rect.clear();
-        _rect.beginFill(0xFF0000, .2);
-        _rect.drawRect(0, 0, texture.width, texture.height);
-        _rect.endFill();
+        this._rect.clear();
+        this._rect.beginFill(0xFF0000, .2);
+        this._rect.drawRect(this._spriteMain.x, this._spriteMain.y, this._spriteMain.children[0].width, this._spriteMain.children[0].height);
+        this._rect.endFill();
 
-        _spriteMain.texture = texture;
+        this._setDebugMode();
+    }
+
+    _setDebugMode () {
+        let element = this._element;
+        let type = element.getType();
+
+        if (type == 'ground') {
+            let points = [];
+
+            for (let i = 0; i < 4; i++) {
+                let point = new Graphics();
+
+                point.beginFill(0xFF0000);
+                point.arc(0, 0, 1, 0, 2 * Math.PI);
+                point.endFill();
+
+                points.push(point);
+            }
+
+
+        } else if (type == 'slope') {
+
+        } else if (type == 'wall') {
+
+        }
     }
 
 }

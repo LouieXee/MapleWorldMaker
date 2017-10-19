@@ -32,6 +32,8 @@ export default class Map {
     setElements (elements) {
         let { stage } = this._app;
 
+        elements.sort((a, b) => ( a.getProps().zIndex > b.getProps().zIndex ));
+
         this._elements = elements.map(element => {
             return new SpriteMapElement(element, {
                 eventSys: this._eventSys
