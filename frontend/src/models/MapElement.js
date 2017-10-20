@@ -45,7 +45,7 @@ export default class MapElement {
         };
     }
 
-    updateProps (props) {
+    setProps (props) {
         this._properties = {
             ...this._properties,
             ...props
@@ -55,7 +55,7 @@ export default class MapElement {
             this._type,
             this._handleTextures(this._type, this._textures, this._properties),
             this._properties
-        )
+        );
 
         this._events.emit('update');
     }
@@ -81,8 +81,8 @@ export default class MapElement {
 
     /*
         @description 
-            一. 因为图像和逻辑需要, 拖拽得到的坐标和图像显示的坐标是有一定的便宜的;
-            二. 为了保证鼠标拖拽过程中, 希望保证拖拽效果, 所以偏移逻辑没有在MapTexture中处理
+            一. 因为图像和逻辑需要, 拖拽得到的坐标和图像显示的坐标是有一定的偏移的;
+            二. 为了保证鼠标拖拽过程中, 保证拖拽效果, 所以偏移逻辑没有在MapTexture中处理
     */
     setPosition ({x, y}) {
         switch (this._type) {

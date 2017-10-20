@@ -10,6 +10,14 @@ export default class PanelTypes extends React.Component {
         super(...arguments);
     }
 
+    shouldComponentUpdate (nextProps, nextState) {
+        if (this.props.visible != nextProps.visible) {
+            return true;
+        }
+
+        return false;
+    }
+
     render () {
         let { types, visible } = this.props;
 

@@ -14,18 +14,9 @@ export default class PanelMap extends React.Component {
         super(...arguments);
 
         this._events = new Events();
-        this._elements = [];
         this.state = {
             dragable: false
         };
-    }
-
-    // TODO 是否需要做更新判断
-    componentWillReceiveProps (nextProps) {
-        let { elements = [] } = nextProps;
-
-        this._elements = elements;
-        this._map.setElements(elements);
     }
 
     componentDidMount () {
@@ -44,7 +35,7 @@ export default class PanelMap extends React.Component {
     }
 
     shouldComponentUpdate () {
-        // 除非更新width或height, 否则不更新
+        // 目前无需更新, 仅需更新Canvas
         return false;
     }
 
@@ -67,6 +58,10 @@ export default class PanelMap extends React.Component {
                 <canvas ref="stage" />
             </div>
         );
+    }
+
+    updateElement (elements) {
+        this._map.setElements(elements);
     }
 
     _initMap () {

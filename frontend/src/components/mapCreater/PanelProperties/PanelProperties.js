@@ -31,7 +31,8 @@ class PanelProperties extends React.Component {
         if ((!currentElement && nextElement)
          || (currentElement && nextElement && currentElement.getId () != nextElement.getId())) {
             this.setState({
-                element: nextElement
+                element: nextElement,
+                isModified: false
             }, () => {
                 let { edge, size, dir, zIndex } = nextElement.getProps();
 
@@ -59,6 +60,15 @@ class PanelProperties extends React.Component {
         }
     }
 
+    shouldComponentUpdate (nextProps, nextState) {
+        // TODO
+        if (this.props.visible || nextProps.visible) {
+            return true;
+        }
+
+        return false;
+    }
+
     render () {
         let { element, visible } = this.props;
 
@@ -67,7 +77,8 @@ class PanelProperties extends React.Component {
                 <div className="panel-props__wrapper">
                     { this._renderForm() }
                     <div className="common__mt12 common__tc">
-                        <Button type="primary" onClick={this._handleUpdateElementProps.bind(this)}>保存</Button>
+                        <Button className="common__m04" type="primary" onClick={this._handleUpdateElementProps.bind(this)}>确定</Button>
+                        <Button className="common__m04" onClick={this.props.onClose}>取消</Button>
                     </div>
                 </div>
             </Panel>
@@ -87,10 +98,15 @@ class PanelProperties extends React.Component {
                 return err;
             }
 
-            this.state.element.updateProps(values);
-            this.props.onClose && this.props.onClose();
+            this.props.onUpdateElement && this.props.onUpdateElement(this.state.element, values);
         })
     }
+
+    _handleDeleteElement () {
+        this.props.onDeleteElement && this.props.onDeleteElement(this.state.element)
+    }
+
+    _handleFormFieldValueChange () {}
 
     _renderForm () {
         let { element } = this.state;
@@ -122,7 +138,7 @@ class PanelProperties extends React.Component {
                                 message: '地面尺寸不能为空!'
                             }]
                         })(
-                            <InputNumber placeholder="请输入地面尺寸" />
+                            <InputNumber onChange={this._handleFormFieldValueChange.bind(this)} placeholder="请输入地面尺寸" />
                         )
                     }
                 </FormItem>
@@ -134,7 +150,7 @@ class PanelProperties extends React.Component {
                                 message: '请选择边缘类型!'
                             }]
                         })(
-                            <Group>
+                            <Group onChange={this._handleFormFieldValueChange.bind(this)}>
                                 <Radio value="left">左边缘</Radio>
                                 <Radio value="right">右边缘</Radio>
                                 <Radio value="both">两侧边缘</Radio>
@@ -151,7 +167,7 @@ class PanelProperties extends React.Component {
                                 message: '层级不能为空!'
                             }]
                         })(
-                            <InputNumber placeholder="请输入层级" />
+                            <InputNumber onChange={this._handleFormFieldValueChange.bind(this)} placeholder="请输入层级" />
                         )
                     }
                 </FormItem>
@@ -172,7 +188,7 @@ class PanelProperties extends React.Component {
                                 message: '斜坡尺寸不能为空!'
                             }]
                         })(
-                            <InputNumber placeholder="请输入斜坡尺寸" />
+                            <InputNumber onChange={this._handleFormFieldValueChange.bind(this)} placeholder="请输入斜坡尺寸" />
                         )
                     }
                 </FormItem>
@@ -184,7 +200,7 @@ class PanelProperties extends React.Component {
                                 message: '请选择斜坡朝向!'
                             }]
                         })(
-                            <Group>
+                            <Group onChange={this._handleFormFieldValueChange.bind(this)}>
                                 <Radio value="left">向左</Radio>
                                 <Radio value="right">向右</Radio>
                             </Group>
@@ -199,7 +215,7 @@ class PanelProperties extends React.Component {
                                 message: '层级不能为空!'
                             }]
                         })(
-                            <InputNumber placeholder="请输入层级" />
+                            <InputNumber onChange={this._handleFormFieldValueChange.bind(this)} placeholder="请输入层级" />
                         )
                     }
                 </FormItem>
@@ -220,7 +236,7 @@ class PanelProperties extends React.Component {
                                 message: '墙面尺寸不能为空!'
                             }]
                         })(
-                            <InputNumber placeholder="请输入墙面尺寸" />
+                            <InputNumber onChange={this._handleFormFieldValueChange.bind(this)} placeholder="请输入墙面尺寸" />
                         )
                     }
                 </FormItem>
@@ -232,7 +248,7 @@ class PanelProperties extends React.Component {
                                 message: '请选择墙面朝向!'
                             }]
                         })(
-                            <Group>
+                            <Group onChange={this._handleFormFieldValueChange.bind(this)}>
                                 <Radio value="left">向左</Radio>
                                 <Radio value="right">向右</Radio>
                             </Group>
@@ -247,7 +263,7 @@ class PanelProperties extends React.Component {
                                 message: '层级不能为空!'
                             }]
                         })(
-                            <InputNumber placeholder="请输入层级" />
+                            <InputNumber onChange={this._handleFormFieldValueChange.bind(this)} placeholder="请输入层级" />
                         )
                     }
                 </FormItem>

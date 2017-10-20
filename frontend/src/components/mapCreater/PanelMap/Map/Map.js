@@ -44,6 +44,18 @@ export default class Map {
         this._elements.length && stage.addChild(...this._elements);
     }
 
+    _removeChildrenByTag (tag) {
+        let childrenNeedToRemoved = [];
+
+        for (let child of this.children) {
+            if (child.getTag && child.getTag() == tag) {
+                childrenNeedToRemoved.push(child);
+            }
+        }
+
+        childrenNeedToRemoved.length && this.removChild(...childrenNeedToRemoved);
+    }
+
     _tick () {
         const { ticker } = this._app;
 

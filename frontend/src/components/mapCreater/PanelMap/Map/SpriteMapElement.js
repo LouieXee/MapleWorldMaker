@@ -8,15 +8,17 @@ export default class SpriteMapElement extends Sprite {
 
         this._element = element;
         this._spriteMain = new Sprite();
+        this._hover = new Graphics();
         this._rect = new Graphics();
         this._eventSys = eventSys;
+        this._tag = 'elements';
 
-        this._rect.visible = false;
+        this._hover.visible = false;
 
         this._setTexture();
         this._bind();
 
-        this.addChild(this._spriteMain, this._rect);
+        this.addChild(this._spriteMain, this._hover, this._rect);
     }
 
     update () {
@@ -26,12 +28,20 @@ export default class SpriteMapElement extends Sprite {
         this.y = pos.y;
     }
 
+    getTag () {
+        return this._tag;
+    }
+
+    getRect () {
+        return this._rect;
+    }
+
     _bind () {
         // 区别点击事件
         const DRAG_DELAY = 100;
 
         let timeoutId = 0;
-        let { _spriteMain, _rect, _element } = this;
+        let { _spriteMain, _hover, _element } = this;
 
         _spriteMain.interactive = true;
         _spriteMain.cursor = '-webkit-grab';
@@ -47,47 +57,43 @@ export default class SpriteMapElement extends Sprite {
             this._eventSys.emit('select', this._element);
         })
         .on('mouseover', e => {
-            _rect.visible = true;
+            _hover.visible = true;
         })
         .on('mouseout', e=> {
-            _rect.visible = false;
+            _hover.visible = false;
         })
     }
 
     _setTexture () {
         this._spriteMain = this._element.getTexture();
 
-        this._rect.clear();
-        this._rect.beginFill(0xFF0000, .2);
-        this._rect.drawRect(this._spriteMain.x, this._spriteMain.y, this._spriteMain.children[0].width, this._spriteMain.children[0].height);
-        this._rect.endFill();
+        this._hover.clear();
+        this._hover.beginFill(0xFF0000, .2);
+        this._hover.drawRect(this._spriteMain.x, this._spriteMain.y, this._spriteMain.children[0].width, this._spriteMain.children[0].height);
+        this._hover.endFill();
 
-        this._setDebugMode();
-    }
-
-    _setDebugMode () {
         let element = this._element;
+        let rect= this._rect;
+        let spriteMain = this._spriteMain;
         let type = element.getType();
+        let props = element.getProps();
 
+        rect.clear();
+        rect.beginFill(0x00FF00, .4);
         if (type == 'ground') {
-            let points = [];
+            let main = spriteMain.children[0].children[0];
 
-            for (let i = 0; i < 4; i++) {
-                let point = new Graphics();
-
-                point.beginFill(0xFF0000);
-                point.arc(0, 0, 1, 0, 2 * Math.PI);
-                point.endFill();
-
-                points.push(point);
-            }
-
-
+            rect.drawRect(main.x, 0, main.width, main.height);
         } else if (type == 'slope') {
+            let main = spriteMain.children[0];
 
+            rect.drawRect(0, 0, main.width, main.height);
         } else if (type == 'wall') {
+            let main = spriteMain.children[0];
 
+            rect.drawRect(0, spriteMain.y, props.dir == 'left' ? -main.width : main.width, main.height);
         }
+        rect.endFill();
     }
 
 }

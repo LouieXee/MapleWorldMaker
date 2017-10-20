@@ -16,12 +16,12 @@ export default class PageMapCreater extends React.Component {
     constructor () {
         super(...arguments);
 
+        this._elements = [];
         this.state = {
             isLoading: true,
             isPanelTypesVisible: true,
             isPanelPropsVisible: false,
-            selectElement: null,
-            elements: []
+            selectElement: null
         };
     }
     
@@ -55,7 +55,6 @@ export default class PageMapCreater extends React.Component {
                                 ref='map'
                                 width={map.getWidth()} 
                                 height={map.getHeight()} 
-                                elements={this.state.elements} 
                                 onDragElement={this._handleDragElement.bind(this)}
                                 onSelectElement={this._handleSelectElement.bind(this)}
                             />
@@ -68,6 +67,8 @@ export default class PageMapCreater extends React.Component {
                                 element={this.state.selectElement}
                                 visible={this.state.isPanelPropsVisible}
                                 onClose={this._handleClosePanelProps.bind(this)}
+                                onUpdateElement={this._handleUpdateElement.bind(this)}
+                                onDeleteElement={this._handleDeleteElement.bind(this)}
                             />
                         </div>
                     )
@@ -86,20 +87,30 @@ export default class PageMapCreater extends React.Component {
         };
     }
 
+    _compareElementsAndGetLines (target, elements) {
+        let resultLines = [];
+
+        return resultLines;
+    }
+
     _handleDragElement (element) {
         let { map } = this.props;
-        let { elements } = this.state;
+        let elements = this._elements;
         let $container = this.refs['proxy-container'];
         let $proxy = document.createElement('div');
         let $canvas = element.getTexture().toCanvas();
 
         const handleMouseMove = e => {
+            e.preventDefault();
+
             $proxy.style.left = `${e.clientX - $canvas.width / 2}px`;
             $proxy.style.top = `${e.clientY - $canvas.height / 2}px`;
 
             element.setPosition(this._transformPositionFromGlobalToMap($proxy));
         };
         const handleMouseUp = e => {
+            e.preventDefault();
+
             $proxy.style.left = `${e.clientX - $canvas.width / 2}px`;
             $proxy.style.top = `${e.clientY - $canvas.height / 2}px`;
 
@@ -109,16 +120,15 @@ export default class PageMapCreater extends React.Component {
 
             if (pos.x >= 0 && pos.y >= 0 && pos.x <= map.getWidth() && pos.y <= map.getHeight()
              && elements.filter(tmp => ( tmp.getId() == element.getId() )).length == 0) {
-                this.setState({
-                    elements: [...elements, element]
-                })
+
+                this._elements = [...elements, element];
+                this.refs.map.updateElement(this._elements);
             } else if ((pos.x < 0 || pos.y < 0 || pos.x > map.getWidth() || pos.y > map.getHeight())
              && elements.find(tmp => ( tmp.getId() == element.getId() ))) {
                 elements = elements.filter(tmp => ( tmp.getId() != element.getId() ));
 
-                this.setState({
-                    elements
-                })
+                this._elements = elements;
+                this.refs.map.updateElement(elements);
             }
 
             $proxy.remove();
@@ -139,6 +149,22 @@ export default class PageMapCreater extends React.Component {
 
         document.addEventListener('mousemove', handleMouseMove);
         document.addEventListener('mouseup', handleMouseUp);
+    }
+
+    _handleUpdateElement (element, newProps) {
+        element.setProps(newProps);
+        this.refs.map.updateElement();
+
+        this.setState({
+            isPanelPropsVisible: false
+        })
+    }
+
+    _handleDeleteElement (element) {
+        this.setState({
+            elements: this.state.elements.filter(tmp => (tmp.getId() != element.getId() )),
+            isPanelPropsVisible: false
+        })
     }
 
     _handleSelectElement (element) {
