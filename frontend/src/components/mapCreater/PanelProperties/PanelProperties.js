@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Button, InputNumber, Radio } from 'antd';
+import { Form, Button, InputNumber, Radio, Modal } from 'antd';
 
 import Panel from '../../common/Panel';
 import FormItem from '../../common/FormItem';
@@ -76,8 +76,9 @@ class PanelProperties extends React.Component {
             <Panel ref="panel" className="panel-props" extra="元素属性" visible={visible} onClose={this.props.onClose}>
                 <div className="panel-props__wrapper">
                     { this._renderForm() }
-                    <div className="common__mt12 common__tc">
-                        <Button className="common__m04" type="primary" onClick={this._handleUpdateElementProps.bind(this)}>确定</Button>
+                    <div className="common__mt12 common__tr">
+                        <Button className="common__mr12" type="danger" onClick={this._handleDeleteElement.bind(this)}>删除元素</Button>
+                        <Button className="common__ml12 common__m04" type="primary" onClick={this._handleUpdateElementProps.bind(this)}>确定</Button>
                         <Button className="common__m04" onClick={this.props.onClose}>取消</Button>
                     </div>
                 </div>
@@ -103,7 +104,12 @@ class PanelProperties extends React.Component {
     }
 
     _handleDeleteElement () {
-        this.props.onDeleteElement && this.props.onDeleteElement(this.state.element)
+        Modal.confirm({
+            content: '确定要删除该元素吗?',
+            onOk: () => {
+                this.props.onDeleteElement && this.props.onDeleteElement(this.state.element);
+            }
+        })
     }
 
     _handleFormFieldValueChange () {}
@@ -151,10 +157,10 @@ class PanelProperties extends React.Component {
                             }]
                         })(
                             <Group onChange={this._handleFormFieldValueChange.bind(this)}>
+                                <Radio value="none">无边缘</Radio>
                                 <Radio value="left">左边缘</Radio>
                                 <Radio value="right">右边缘</Radio>
                                 <Radio value="both">两侧边缘</Radio>
-                                <Radio value="none">无边缘</Radio>
                             </Group>
                         )
                     }

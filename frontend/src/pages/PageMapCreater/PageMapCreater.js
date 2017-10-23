@@ -5,6 +5,7 @@ import { Spin } from 'antd';
 import PanelMap from '../../components/mapCreater/PanelMap';
 import PanelTypes from '../../components/mapCreater/PanelTypes';
 import PanelProperties from '../../components/mapCreater/PanelProperties';
+import NavMap from '../../components/mapCreater/NavMap';
 
 import MapElement from '../../models/MapElement';
 import { Dragable } from '../../utils';
@@ -19,7 +20,7 @@ export default class PageMapCreater extends React.Component {
         this._elements = [];
         this.state = {
             isLoading: true,
-            isPanelTypesVisible: true,
+            isPanelTypesVisible: false,
             isPanelPropsVisible: false,
             selectElement: null
         };
@@ -42,37 +43,45 @@ export default class PageMapCreater extends React.Component {
 
         return (
             <div className="map-creater" ref="proxy-container">
-                {
-                    this.state.isLoading 
-                    ? (
-                        <div className="common__tips-wrapper">
-                            <Spin />
-                        </div>
-                    )
-                    : (
-                        <div>
-                            <PanelMap 
-                                ref='map'
-                                width={map.getWidth()} 
-                                height={map.getHeight()} 
-                                onDragElement={this._handleDragElement.bind(this)}
-                                onSelectElement={this._handleSelectElement.bind(this)}
-                            />
-                            <PanelTypes 
-                                visible={this.state.isPanelTypesVisible} 
-                                types={map.getTypes()} 
-                                onDragElement={this._handleDragElement.bind(this)}
-                            />
-                            <PanelProperties
-                                element={this.state.selectElement}
-                                visible={this.state.isPanelPropsVisible}
-                                onClose={this._handleClosePanelProps.bind(this)}
-                                onUpdateElement={this._handleUpdateElement.bind(this)}
-                                onDeleteElement={this._handleDeleteElement.bind(this)}
-                            />
-                        </div>
-                    )
-                }
+                <div className="map-creater__header">
+                    <NavMap
+                        onClick={this._handleNavSelect.bind(this)}
+                    />
+                </div>
+                <div className="map-creater__body">
+                    {
+                        this.state.isLoading 
+                        ? (
+                            <div className="common__tips-wrapper">
+                                <Spin />
+                            </div>
+                        )
+                        : (
+                            <div>
+                                <PanelMap 
+                                    ref='map'
+                                    width={map.getWidth()} 
+                                    height={map.getHeight()} 
+                                    onDragElement={this._handleDragElement.bind(this)}
+                                    onSelectElement={this._handleSelectElement.bind(this)}
+                                />
+                                <PanelTypes 
+                                    visible={this.state.isPanelTypesVisible} 
+                                    types={map.getTypes()} 
+                                    onClose={this._handleClosePanelTypes.bind(this)}
+                                    onDragElement={this._handleDragElement.bind(this)}
+                                />
+                                <PanelProperties
+                                    element={this.state.selectElement}
+                                    visible={this.state.isPanelPropsVisible}
+                                    onClose={this._handleClosePanelProps.bind(this)}
+                                    onUpdateElement={this._handleUpdateElement.bind(this)}
+                                    onDeleteElement={this._handleDeleteElement.bind(this)}
+                                />
+                            </div>
+                        )
+                    }
+                </div>
             </div>
         );
     }
@@ -87,15 +96,20 @@ export default class PageMapCreater extends React.Component {
         };
     }
 
-    _compareElementsAndGetLines (target, elements) {
-        let resultLines = [];
-
-        return resultLines;
+    _handleNavSelect (key) {
+        switch (key) {
+            case 'panel-types' :
+                this.setState({
+                    isPanelTypesVisible: true
+                })
+                break;
+        }
     }
 
     _handleDragElement (element) {
         let { map } = this.props;
         let elements = this._elements;
+        let mapComponent = this.refs.map;
         let $container = this.refs['proxy-container'];
         let $proxy = document.createElement('div');
         let $canvas = element.getTexture().toCanvas();
@@ -106,7 +120,7 @@ export default class PageMapCreater extends React.Component {
             $proxy.style.left = `${e.clientX - $canvas.width / 2}px`;
             $proxy.style.top = `${e.clientY - $canvas.height / 2}px`;
 
-            element.setPosition(this._transformPositionFromGlobalToMap($proxy));
+            element.setPosFromDragPos(this._transformPositionFromGlobalToMap($proxy));
         };
         const handleMouseUp = e => {
             e.preventDefault();
@@ -116,25 +130,26 @@ export default class PageMapCreater extends React.Component {
 
             let pos = this._transformPositionFromGlobalToMap($proxy);
 
-            element.setPosition(pos);
-
-            if (pos.x >= 0 && pos.y >= 0 && pos.x <= map.getWidth() && pos.y <= map.getHeight()
-             && elements.filter(tmp => ( tmp.getId() == element.getId() )).length == 0) {
-
-                this._elements = [...elements, element];
-                this.refs.map.updateElement(this._elements);
-            } else if ((pos.x < 0 || pos.y < 0 || pos.x > map.getWidth() || pos.y > map.getHeight())
-             && elements.find(tmp => ( tmp.getId() == element.getId() ))) {
+            if (pos.x + $canvas.width / 2 < 0 || pos.y + $canvas.height / 2 < 0 || pos.x + $canvas.width / 2 > map.getWidth() || pos.y + $canvas.height / 2 > map.getHeight()) {
                 elements = elements.filter(tmp => ( tmp.getId() != element.getId() ));
 
                 this._elements = elements;
-                this.refs.map.updateElement(elements);
+                mapComponent.updateElements(elements);
             }
+
+            mapComponent.setDragedElement(null);
 
             $proxy.remove();
             document.removeEventListener('mousemove', handleMouseMove);
             document.removeEventListener('mouseup', handleMouseUp);
         };
+
+        if (!elements.find(tmp => (tmp.getId() == element.getId()))) {
+            elements.push(element);
+            mapComponent.updateElements(elements)
+        }
+
+        mapComponent.setDragedElement(element);
 
         $proxy.appendChild($canvas);
         $proxy.style = `
@@ -142,7 +157,7 @@ export default class PageMapCreater extends React.Component {
             left: -${$canvas.width}px;
             top: -${$canvas.height}px;
             z-index: 1024;
-            opacity: .4;
+            opacity: .2;
         `;
 
         $container.appendChild($proxy);
@@ -153,7 +168,7 @@ export default class PageMapCreater extends React.Component {
 
     _handleUpdateElement (element, newProps) {
         element.setProps(newProps);
-        this.refs.map.updateElement();
+        this.refs.map.updateElements(this._elements);
 
         this.setState({
             isPanelPropsVisible: false
@@ -161,8 +176,10 @@ export default class PageMapCreater extends React.Component {
     }
 
     _handleDeleteElement (element) {
+        this._elements = this._elements.filter(tmp => (tmp.getId() != element.getId() ));
+        this.refs.map.updateElements(this._elements);
+
         this.setState({
-            elements: this.state.elements.filter(tmp => (tmp.getId() != element.getId() )),
             isPanelPropsVisible: false
         })
     }
@@ -178,6 +195,12 @@ export default class PageMapCreater extends React.Component {
         this.setState({
             selectElement: null,
             isPanelPropsVisible: false
+        })
+    }
+
+    _handleClosePanelTypes () {
+        this.setState({
+            isPanelTypesVisible: false
         })
     }
 

@@ -16,8 +16,8 @@ export default class MapElement {
         } = element;
 
         this._id = getUniqueId();
-        this._x = 0;
-        this._y = 0;
+        this.x = this._x = -999;
+        this.y = this._y = -999;
         this._type = type;
         this._textures = textures;
         this._properties = { 
@@ -37,14 +37,6 @@ export default class MapElement {
         return this._mapTexture;
     }
 
-    onUpdate (callback) {
-        this._events.on('update', callback);
-
-        return () => {
-            this._events.off('update', callback);
-        };
-    }
-
     setProps (props) {
         this._properties = {
             ...this._properties,
@@ -56,8 +48,6 @@ export default class MapElement {
             this._handleTextures(this._type, this._textures, this._properties),
             this._properties
         );
-
-        this._events.emit('update');
     }
 
     getProps () {
@@ -79,29 +69,23 @@ export default class MapElement {
         };
     }
 
+    setPostion ({x, y}) {
+        this._x = x;
+        this._y = y;
+    }
+
     /*
-        @description 
+        @description 拖拽得到的坐标转化为实际在地图中的准确坐标
             一. 因为图像和逻辑需要, 拖拽得到的坐标和图像显示的坐标是有一定的偏移的;
-            二. 为了保证鼠标拖拽过程中, 保证拖拽效果, 所以偏移逻辑没有在MapTexture中处理
+            二. 为了保证鼠标拖拽过程中的拖拽效果, 所以偏移逻辑没有在MapTexture中处理
+            三. 所有的坐标取整
     */
-    setPosition ({x, y}) {
-        switch (this._type) {
-            case 'ground':
-                this._x = x;
-                this._y = y + (this._properties.groundHeight - this._mapTexture.children[0].height);
-                break;
-            case 'wall':
-                this._y = y - this._properties.groundHeight;
-                if (this._properties.dir == 'left') {
-                    this._x = x + this._mapTexture.children[0].width;
-                } else {
-                    this._x = x;
-                }
-                break;
-            default:
-                this._x = x;
-                this._y = y;
-        }
+    setPosFromDragPos ({x, y}) {
+        x = Math.round(x);
+        y = Math.round(y);
+
+        this._y = y - this._mapTexture.y;
+        this._x = x - this._mapTexture.x;
 
         return this;
     }

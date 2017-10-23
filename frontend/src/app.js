@@ -45,6 +45,7 @@ export default class App extends React.Component {
             <Layout className="app">
                 <Header className="app__header">
                     <a href="javascript:;" className="app__logo">MWMaker</a>
+                    
                 </Header>
                 <Content className="app__content">
                     <PageMapCreater map={MAP} />

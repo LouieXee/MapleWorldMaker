@@ -1,5 +1,10 @@
+import { isNumber } from '../../../../utils';
+
 const { Sprite, Texture, Graphics } = PIXI;
 const { TextureCache } = PIXI.utils;
+
+// 区别点击事件
+const DRAG_DELAY = 120;
 
 export default class SpriteMapElement extends Sprite {
 
@@ -28,6 +33,10 @@ export default class SpriteMapElement extends Sprite {
         this.y = pos.y;
     }
 
+    getId () {
+        return this._element.getId();
+    }
+
     getTag () {
         return this._tag;
     }
@@ -36,10 +45,30 @@ export default class SpriteMapElement extends Sprite {
         return this._rect;
     }
 
-    _bind () {
-        // 区别点击事件
-        const DRAG_DELAY = 100;
+    setRectPos (pos) {
+        let x = this.x;
+        let y = this.y;
 
+        if (isNumber(pos.x)) {
+            x = pos.x - this._rect.x;
+        }
+
+        if (isNumber(pos.y)) {
+            y = pos.y - this._rect.y;
+        }
+
+        this.x = x;
+        this.y = y;
+
+        this._element.setPostion({
+            x,
+            y
+        });
+
+        return this;
+    }
+
+    _bind () {
         let timeoutId = 0;
         let { _spriteMain, _hover, _element } = this;
 
@@ -59,7 +88,7 @@ export default class SpriteMapElement extends Sprite {
         .on('mouseover', e => {
             _hover.visible = true;
         })
-        .on('mouseout', e=> {
+        .on('mouseout', e => {
             _hover.visible = false;
         })
     }
@@ -79,11 +108,12 @@ export default class SpriteMapElement extends Sprite {
         let props = element.getProps();
 
         rect.clear();
-        rect.beginFill(0x00FF00, .4);
+        rect.beginFill(0x00FF00, 0);
         if (type == 'ground') {
             let main = spriteMain.children[0].children[0];
 
-            rect.drawRect(main.x, 0, main.width, main.height);
+            rect.drawRect(0, 0, main.width, main.height + spriteMain.y);
+            rect.x = main.x;
         } else if (type == 'slope') {
             let main = spriteMain.children[0];
 
@@ -91,7 +121,8 @@ export default class SpriteMapElement extends Sprite {
         } else if (type == 'wall') {
             let main = spriteMain.children[0];
 
-            rect.drawRect(0, spriteMain.y, props.dir == 'left' ? -main.width : main.width, main.height);
+            rect.drawRect(0, 0, 0, main.height);
+            rect.y = spriteMain.y;
         }
         rect.endFill();
     }

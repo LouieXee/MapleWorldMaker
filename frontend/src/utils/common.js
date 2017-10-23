@@ -10,6 +10,10 @@ export function isString (target) {
     return _getType(target) == '[object String]';
 }
 
+export function isNumber (target) {
+    return _getType(target) == '[object Number]';
+}
+
 export function noop () {}
 
 export function getUniqueId () {

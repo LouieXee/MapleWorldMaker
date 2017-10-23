@@ -60,8 +60,18 @@ export default class PanelMap extends React.Component {
         );
     }
 
-    updateElement (elements) {
+    /*
+        @description 更新当前所有地图元素
+    */ 
+    updateElements (elements) {
         this._map.setElements(elements);
+    }
+
+    /*
+        @description 设置当前拖拽元素
+    */ 
+    setDragedElement (element) {
+        this._map.setDragedElement(element);
     }
 
     _initMap () {

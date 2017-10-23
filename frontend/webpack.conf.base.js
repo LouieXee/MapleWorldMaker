@@ -5,6 +5,8 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+const theme = require('./src/theme.js');
+
 module.exports = {
 
     entry: path.resolve(__dirname, 'src/index.js'),
@@ -15,25 +17,48 @@ module.exports = {
     },
 
     module: {
-        loaders: [
+        rules: [
             {
                 test: /\.jsx?$/,
                 exclude: [/node_modules/],
-                loader: 'babel-loader'
+                use: [ 'babel-loader' ]
             },
             {
                 test: /\.less$/,
-                loader: 'style-loader!css-loader!postcss-loader?browsers=last 2 version!less-loader'
+                use: [
+                    'style-loader',
+                    'css-loader',
+                    {
+                        loader: 'postcss-loader',
+                        options: {
+                            browsers: 'last 2 version'
+                        }
+                    },
+                    {
+                        loader: 'less-loader',
+                        options: {
+                            modifyVars: theme
+                        }
+                    }
+                ]
             },
             {
                 test: /\.(png|jpg|jpeg|gif|woff|eot|ttf|svg)$/,
                 exclude: [/node_modules/],
-                loader: 'url-loader?limit=1024&name=[name]_[hash:8].[ext]'
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            limit: 1024,
+                            name: '[name]_[hash:8].[ext]'   
+                        }
+                    }
+                ]
             },
             {
                 test: /\.html$/,
                 exclude: [/node_modules/],
-                loader: 'html-loader'
+                use: [ 'html-loader' ]
             }
         ]
     },

@@ -22,7 +22,7 @@ export default class PanelTypes extends React.Component {
         let { types, visible } = this.props;
 
         return (
-            <Panel className="panel-types" extra='地图元素' visible={visible}>
+            <Panel className="panel-types" extra='地图元素' visible={visible} onClose={this.props.onClose}>
                 <ul className="panel-types__list">
                     { this._createMapElements(types) }
                 </ul>
