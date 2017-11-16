@@ -31,37 +31,18 @@ class PanelProperties extends React.Component {
         if ((!currentElement && nextElement)
          || (currentElement && nextElement && currentElement.getId () != nextElement.getId())) {
             this.setState({
-                element: nextElement,
-                isModified: false
+                element: nextElement
             }, () => {
-                let { edge, size, dir, zIndex } = nextElement.getProps();
+                let props = nextElement.getProps();
 
-                switch (nextElement.getType()) {
-                    case 'ground':
-                        return this.props.form.setFieldsValue({
-                            edge,
-                            size,
-                            zIndex
-                        });
-                    case 'slope':
-                        return this.props.form.setFieldsValue({
-                            dir,
-                            size,
-                            zIndex
-                        });
-                    case 'wall':
-                        return this.props.form.setFieldsValue({
-                            dir,
-                            size,
-                            zIndex
-                        });
-                }
+                this.props.form.setFieldsValue(props);
             })
+
+            this._locatePanel();
         }
     }
 
     shouldComponentUpdate (nextProps, nextState) {
-        // TODO
         if (this.props.visible || nextProps.visible) {
             return true;
         }
@@ -73,7 +54,7 @@ class PanelProperties extends React.Component {
         let { element, visible } = this.props;
 
         return (
-            <Panel ref="panel" className="panel-props" extra="元素属性" visible={visible} onClose={this.props.onClose}>
+            <Panel ref={panel => { this.panel = panel; }} className="panel-props" extra="元素属性" visible={visible} onClose={this.props.onClose}>
                 <div className="panel-props__wrapper">
                     { this._renderForm() }
                     <div className="common__mt12 common__tr">
@@ -87,7 +68,7 @@ class PanelProperties extends React.Component {
     }
 
     _locatePanel () {
-        let panel = this.refs.panel.refs.panel;
+        let panel = this.panel.panel;
 
         panel.style.top = '2px';
         panel.style.left = `${window.innerWidth - parseInt(getComputedStyle(panel).width) - 2}px`;

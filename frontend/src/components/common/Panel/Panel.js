@@ -7,7 +7,7 @@ import { Dragable } from '../../../utils';
 export default class Panel extends React.Component {
 
     componentDidMount () {
-        this._dragable = new Dragable(this.refs.panel, {
+        this._dragable = new Dragable(this.panel, {
             available: false
         });
     }
@@ -31,7 +31,7 @@ export default class Panel extends React.Component {
         };
 
         return (
-            <div ref='panel' className={classNames(className, 'panel')} style={style}>
+            <div ref={panel => { this.panel = panel; }} className={classNames(className, 'panel')} style={style}>
                 <div 
                     className="panel__header"
                     onMouseMove={() => { 

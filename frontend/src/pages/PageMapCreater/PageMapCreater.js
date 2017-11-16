@@ -42,7 +42,7 @@ export default class PageMapCreater extends React.Component {
         let { map } = this.props;
 
         return (
-            <div className="map-creater" ref="proxy-container">
+            <div className="map-creater" ref={proxyContainer => { this.proxyContainer = proxyContainer; }}>
                 <div className="map-creater__header">
                     <NavMap
                         onClick={this._handleNavSelect.bind(this)}
@@ -59,7 +59,7 @@ export default class PageMapCreater extends React.Component {
                         : (
                             <div>
                                 <PanelMap 
-                                    ref='map'
+                                    ref={map => { this.panelMap = map; }}
                                     width={map.getWidth()} 
                                     height={map.getHeight()} 
                                     onDragElement={this._handleDragElement.bind(this)}
@@ -88,7 +88,7 @@ export default class PageMapCreater extends React.Component {
 
     _transformPositionFromGlobalToMap (ele) {
         let eleData = ele.getBoundingClientRect();
-        let mapData = this.refs.map.refs.panel.getBoundingClientRect();
+        let mapData = this.panelMap.panel.getBoundingClientRect();
 
         return {
             x: eleData.left - mapData.left,
@@ -109,8 +109,8 @@ export default class PageMapCreater extends React.Component {
     _handleDragElement (element) {
         let { map } = this.props;
         let elements = this._elements;
-        let mapComponent = this.refs.map;
-        let $container = this.refs['proxy-container'];
+        let mapComponent = this.panelMap;
+        let $container = this.proxyContainer;
         let $proxy = document.createElement('div');
         let $canvas = element.getTexture().toCanvas();
 
@@ -168,7 +168,7 @@ export default class PageMapCreater extends React.Component {
 
     _handleUpdateElement (element, newProps) {
         element.setProps(newProps);
-        this.refs.map.updateElements(this._elements);
+        this.panelMap.updateElements(this._elements);
 
         this.setState({
             isPanelPropsVisible: false
@@ -177,7 +177,7 @@ export default class PageMapCreater extends React.Component {
 
     _handleDeleteElement (element) {
         this._elements = this._elements.filter(tmp => (tmp.getId() != element.getId() ));
-        this.refs.map.updateElements(this._elements);
+        this.panelMap.updateElements(this._elements);
 
         this.setState({
             isPanelPropsVisible: false

@@ -11,7 +11,7 @@ export default class SpriteMapLine extends Sprite {
         this.y = opt.y;
         this._targetX = opt.targetX;
         this._targetY = opt.targetY;
-    
+
         this._id = getUniqueId();
         this._tag = 'lines';
 

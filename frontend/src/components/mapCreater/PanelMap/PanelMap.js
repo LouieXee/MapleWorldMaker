@@ -54,8 +54,8 @@ export default class PanelMap extends React.Component {
         };
 
         return (
-            <div ref="panel" className="panel-map" style={style}>
-                <canvas ref="stage" />
+            <div ref={panel => { this.panel = panel; }} className="panel-map" style={style}>
+                <canvas ref={stage => { this.stage = stage; }} />
             </div>
         );
     }
@@ -79,7 +79,7 @@ export default class PanelMap extends React.Component {
         let map = new Map({
             width,
             height,
-            view: this.refs.stage,
+            view: this.stage,
             eventSys: this._events
         });
 
@@ -97,7 +97,7 @@ export default class PanelMap extends React.Component {
     }
 
     _setDragableListener () {
-        const dragable = new Dragable(this.refs.panel, {
+        const dragable = new Dragable(this.panel, {
             available: false
         })
         const _handleKeyDown = e => {
