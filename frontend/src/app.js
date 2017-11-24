@@ -43,7 +43,7 @@ export default class App extends React.Component {
     render () {
         return (
             <Layout className="app">
-                <Header className="app__header">
+                <Header className="app__header nav">
                     <a href="javascript:;" className="app__logo">MWMaker</a>
                 </Header>
                 <Content className="app__content">

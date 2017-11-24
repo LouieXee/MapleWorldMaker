@@ -41,12 +41,13 @@ export default class Map {
 
         elements.sort((a, b) => ( a.getProps().zIndex > b.getProps().zIndex ));
 
+        stage.removeChildren();
+
         this._elements = elements.map(element => {
             return new SpriteMapElement(element, {
                 eventSys: this._eventSys
             })
         });
-        stage.removeChildren();
 
         this._elements.length && stage.addChild(...this._elements);
     }

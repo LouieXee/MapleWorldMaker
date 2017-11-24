@@ -43,7 +43,7 @@ export default class PageMapCreater extends React.Component {
 
         return (
             <div className="map-creater" ref={proxyContainer => { this.proxyContainer = proxyContainer; }}>
-                <div className="map-creater__header">
+                <div className="map-creater__header nav">
                     <NavMap
                         onClick={this._handleNavSelect.bind(this)}
                     />

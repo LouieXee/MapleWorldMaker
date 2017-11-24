@@ -8,6 +8,12 @@ const SPACE_KEY_CODE = 32;
 
 const { Application } = PIXI;
 
+/*
+    @descriptino 该组件是在 canvas 外套一层组件, 封装拖拽逻辑
+
+    @method updateElements
+    @method setDragedElement
+*/
 export default class PanelMap extends React.Component {
 
     constructor () {

@@ -1,7 +1,7 @@
 import { isNumber } from '../../../../utils';
 
 const { Sprite, Texture, Graphics } = PIXI;
-const { TextureCache } = PIXI.utils;
+const { TextureCache, uid } = PIXI.utils;
 
 // 区别点击事件
 const DRAG_DELAY = 120;
@@ -10,6 +10,8 @@ export default class SpriteMapElement extends Sprite {
 
     constructor (element, { eventSys }) {
         super();
+
+        this._myUid = uid();
 
         this._element = element;
         this._spriteMain = new Sprite();
@@ -90,6 +92,15 @@ export default class SpriteMapElement extends Sprite {
         })
         .on('mouseout', e => {
             _hover.visible = false;
+        })
+
+        /*
+            TODO 即便在父级removeChildren, 但是如果不声明移除所有监听器, 回调仍会被调用, 怀疑会被垃圾回收, 但是未找到哪里还有被使用
+        */
+        this.on('removed', () => {
+            _spriteMain.removeAllListeners();
+
+            this.removeAllListeners();
         })
     }
 

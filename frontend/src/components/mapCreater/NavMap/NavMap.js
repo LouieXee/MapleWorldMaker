@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu } from 'antd';
+import { Menu, Dropdown } from 'antd';
 
 const { SubMenu, Item } = Menu;
 
@@ -11,22 +11,42 @@ export default class NavMap extends React.Component {
 
     render () {
         return (
+            <div>
+                <Dropdown overlay={this._renderMenuMap()} trigger={["click"]}>
+                    <a className="nav__dropdown" href="javascript:;">地图</a>
+                </Dropdown>
+                <Dropdown overlay={this._renderMenuPanel()} trigger={["click"]}>
+                    <a className="nav__dropdown" href="javascript:;">面板</a>
+                </Dropdown>
+            </div>
+        );
+    }
+
+    _renderMenuMap () {
+        return (
             <Menu
                 className="nav-map"
                 theme="dark"
-                mode="horizontal"
                 selectable={false}
                 onClick={this._handleMenuClick.bind(this)}
             >
-                <SubMenu className="nav-map__sub" title="地图">
-                    <Item className="nav-map__item"  key="import">导入地图</Item>
-                    <Item className="nav-map__item"  key="export">导出地图</Item>
-                    <Item className="nav-map__item"  key="adjust">调整尺寸</Item>
-                    <Item className="nav-map__item"  key="exit">退出</Item>
-                </SubMenu>
-                <SubMenu className="nav-map__sub" title="面板">
-                    <Item className="nav-map__item"  key="panel-types">地图元素</Item>
-                </SubMenu>
+                <Item key="import">导入地图</Item>
+                <Item key="export">导出地图</Item>
+                <Item key="adjust">调整尺寸</Item>
+                <Item key="exit">退出</Item>
+            </Menu>
+        );
+    }
+
+    _renderMenuPanel () {
+        return (
+            <Menu
+                className="nav-map"
+                theme="dark"
+                selectable={false}
+                onClick={this._handleMenuClick.bind(this)}
+            >
+                <Item key="panel-types">地图元素</Item>
             </Menu>
         );
     }
