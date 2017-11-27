@@ -52,9 +52,7 @@ export default class PageMapCreater extends React.Component {
                     {
                         this.state.isLoading 
                         ? (
-                            <div className="common__tips-wrapper">
-                                <Spin />
-                            </div>
+                            <div className="common__tips-wrapper"> <Spin /> </div>
                         )
                         : (
                             <div>

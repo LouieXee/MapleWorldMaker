@@ -14,9 +14,9 @@ export default class SpriteMapElement extends Sprite {
         this._myUid = uid();
 
         this._element = element;
-        this._spriteMain = new Sprite();
-        this._hover = new Graphics();
-        this._rect = new Graphics();
+        this._spriteMain = null;        // 图片资源
+        this._hover = new Graphics();   // 鼠标悬浮区域
+        this._rect = new Graphics();    // 位置对比区域
         this._eventSys = eventSys;
         this._tag = 'elements';
 
@@ -24,8 +24,6 @@ export default class SpriteMapElement extends Sprite {
 
         this._setTexture();
         this._bind();
-
-        this.addChild(this._spriteMain, this._hover, this._rect);
     }
 
     update () {
@@ -47,6 +45,9 @@ export default class SpriteMapElement extends Sprite {
         return this._rect;
     }
 
+    /*
+        @description 依据对比矩形的坐标, 得出当前地图元素的坐标
+    */
     setRectPos (pos) {
         let x = this.x;
         let y = this.y;
@@ -93,15 +94,6 @@ export default class SpriteMapElement extends Sprite {
         .on('mouseout', e => {
             _hover.visible = false;
         })
-
-        /*
-            TODO 即便在父级removeChildren, 但是如果不声明移除所有监听器, 回调仍会被调用, 怀疑会被垃圾回收, 但是未找到哪里还有被使用
-        */
-        this.on('removed', () => {
-            _spriteMain.removeAllListeners();
-
-            this.removeAllListeners();
-        })
     }
 
     _setTexture () {
@@ -136,6 +128,8 @@ export default class SpriteMapElement extends Sprite {
             rect.y = spriteMain.y;
         }
         rect.endFill();
+
+        this.addChild(this._spriteMain, this._hover, this._rect);
     }
 
 }

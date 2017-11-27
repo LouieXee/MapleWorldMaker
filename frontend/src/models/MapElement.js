@@ -16,8 +16,8 @@ export default class MapElement {
         } = element;
 
         this._id = getUniqueId();
-        this.x = this._x = -999;
-        this.y = this._y = -999;
+        this._x = -9999;
+        this._y = -9999;
         this._type = type;
         this._textures = textures;
         this._properties = { 
@@ -25,16 +25,15 @@ export default class MapElement {
             ...opts
         };
 
-        this._mapTexture = new MapTexture(
-            this._type, 
-            this._handleTextures(this._type, this._textures, this._properties), 
-            this._properties
-        );
         this._events = new Events();
     }
 
     getTexture () {
-        return this._mapTexture;
+        return new MapTexture(
+            this._type, 
+            this._handleTextures(this._type, this._textures, this._properties), 
+            this._properties
+        );;
     }
 
     setProps (props) {
@@ -42,12 +41,6 @@ export default class MapElement {
             ...this._properties,
             ...props
         };
-
-        this._mapTexture = new MapTexture(
-            this._type,
-            this._handleTextures(this._type, this._textures, this._properties),
-            this._properties
-        );
     }
 
     getProps () {
@@ -84,8 +77,14 @@ export default class MapElement {
         x = Math.round(x);
         y = Math.round(y);
 
-        this._y = y - this._mapTexture.y;
-        this._x = x - this._mapTexture.x;
+        let mapTexture = new MapTexture(
+            this._type,
+            this._handleTextures(this._type, this._textures, this._properties),
+            this._properties
+        );
+
+        this._y = y - mapTexture.y;
+        this._x = x - mapTexture.x;
 
         return this;
     }
