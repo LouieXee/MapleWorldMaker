@@ -2,6 +2,9 @@ import 'pixi.js';
 import React from 'react';
 import { Spin } from 'antd';
 
+import displayObject from '../../../res/displayObject.png';
+import sprite from '../../../res/sprite.png';
+
 import PanelMap from '../../components/mapCreater/PanelMap';
 import PanelTypes from '../../components/mapCreater/PanelTypes';
 import PanelProperties from '../../components/mapCreater/PanelProperties';
@@ -31,6 +34,8 @@ export default class PageMapCreater extends React.Component {
 
         loader
         .add(Object.keys(textures).map(key => (textures[key])))
+        .add(displayObject)
+        .add(sprite)
         .load(() => {
             this.setState({
                 isLoading: false
@@ -110,25 +115,25 @@ export default class PageMapCreater extends React.Component {
         let mapComponent = this.panelMap;
         let $container = this.proxyContainer;
         let $proxy = document.createElement('div');
-        let $canvas = element.getTexture().toCanvas();
+        let $texture = element.toDOM();
 
         const handleMouseMove = e => {
             e.preventDefault();
 
-            $proxy.style.left = `${e.clientX - $canvas.width / 2}px`;
-            $proxy.style.top = `${e.clientY - $canvas.height / 2}px`;
+            $proxy.style.left = `${e.clientX - $texture.width / 2}px`;
+            $proxy.style.top = `${e.clientY - $texture.height / 2}px`;
 
             element.setPosFromDragPos(this._transformPositionFromGlobalToMap($proxy));
         };
         const handleMouseUp = e => {
             e.preventDefault();
 
-            $proxy.style.left = `${e.clientX - $canvas.width / 2}px`;
-            $proxy.style.top = `${e.clientY - $canvas.height / 2}px`;
+            $proxy.style.left = `${e.clientX - $texture.width / 2}px`;
+            $proxy.style.top = `${e.clientY - $texture.height / 2}px`;
 
             let pos = this._transformPositionFromGlobalToMap($proxy);
 
-            if (pos.x + $canvas.width / 2 < 0 || pos.y + $canvas.height / 2 < 0 || pos.x + $canvas.width / 2 > map.getWidth() || pos.y + $canvas.height / 2 > map.getHeight()) {
+            if (pos.x + $texture.width / 2 < 0 || pos.y + $texture.height / 2 < 0 || pos.x + $texture.width / 2 > map.getWidth() || pos.y + $texture.height / 2 > map.getHeight()) {
                 elements = elements.filter(tmp => ( tmp.getId() != element.getId() ));
 
                 this._elements = elements;
@@ -149,11 +154,11 @@ export default class PageMapCreater extends React.Component {
 
         mapComponent.setDragedElement(element);
 
-        $proxy.appendChild($canvas);
+        $proxy.appendChild($texture);
         $proxy.style = `
             position: fixed;
-            left: -${$canvas.width}px;
-            top: -${$canvas.height}px;
+            left: -${$texture.width}px;
+            top: -${$texture.height}px;
             z-index: 1024;
             opacity: .2;
         `;

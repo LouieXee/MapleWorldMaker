@@ -1,19 +1,21 @@
 export default class Map {
 
     constructor (opt = {}) {
+        
         const {
-            width,
-            height,
-            textures,
-            groundWidth,
-            groundHeight,
-            edgeWidth,
-            slopeWidth,
-            slopeHeight,
-            slopeLeftValue,
-            slopeRightValue,
-            wallHeight
+            width,              // 地图宽度
+            height,             // 地图高度
+            textures,           // 地图地面 斜坡 墙的图片资源
+            groundWidth,        // 默认单位地面宽度
+            groundHeight,       // 默认单位地面高度
+            edgeWidth,          // 默认地面边缘宽度
+            slopeWidth,         // 默认单位斜坡宽度
+            slopeHeight,        // 默认单位斜坡高度
+            slopeLeftValue,     // 默认左斜坡坡度系数
+            slopeRightValue,    // 默认右斜坡坡度系数
+            wallHeight          // 默认墙面高度
         } = opt;
+
         const {
             ground,
             edge,
@@ -26,45 +28,39 @@ export default class Map {
         this._width = width;
         this._height = height;
         this._textures = textures;
-        this._types = {
-            ground: {
+        this._types = [
+            {
                 type: 'ground',
                 textures: {
                     main: ground,
                     edge
                 },
-                size: 1,
-                edge: 'none',
                 groundWidth,
                 groundHeight,
                 edgeWidth
             },
-            slope: {
+            {
                 type: 'slope',
                 textures: {
                     left: slopeLeft,
                     right: slopeRight
                 },
-                size: 1,
-                dir: 'left',
                 slopeWidth,
                 slopeHeight,
                 slopeLeftValue,
                 slopeRightValue,
                 groundHeight
             },
-            wall: {
+            {
                 type: 'wall',
                 textures: {
                     left: wallLeft,
                     right: wallRight
                 },
-                size: 1,
-                dir: 'left',
                 wallHeight,
                 groundHeight
             }
-        };
+        ];
     }
 
     getWidth () {

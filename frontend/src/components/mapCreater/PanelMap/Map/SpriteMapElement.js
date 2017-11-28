@@ -11,16 +11,9 @@ export default class SpriteMapElement extends Sprite {
     constructor (element, { eventSys }) {
         super();
 
-        this._myUid = uid();
-
         this._element = element;
-        this._spriteMain = null;        // 图片资源
-        this._hover = new Graphics();   // 鼠标悬浮区域
-        this._rect = new Graphics();    // 位置对比区域
         this._eventSys = eventSys;
         this._tag = 'elements';
-
-        this._hover.visible = false;
 
         this._setTexture();
         this._bind();
@@ -63,7 +56,7 @@ export default class SpriteMapElement extends Sprite {
         this.x = x;
         this.y = y;
 
-        this._element.setPostion({
+        this._element.setPosition({
             x,
             y
         });
@@ -75,9 +68,9 @@ export default class SpriteMapElement extends Sprite {
         let timeoutId = 0;
         let { _spriteMain, _hover, _element } = this;
 
-        _spriteMain.interactive = true;
-        _spriteMain.cursor = '-webkit-grab';
-        _spriteMain
+        this.interactive = true;
+        this.cursor = '-webkit-grab';
+        this
         .on('mousedown', e => {
             timeoutId = setTimeout(() => {
                 this._eventSys.emit('drag', this._element);
@@ -97,18 +90,17 @@ export default class SpriteMapElement extends Sprite {
     }
 
     _setTexture () {
-        this._spriteMain = this._element.getTexture();
+        let spriteMain = this._element.getTexture(); // 图片资源
+        let hover = new Graphics();                  // 鼠标悬浮区域
+        let rect = new Graphics();                   // 位置对比区域
+        let type = this._element.getType();
+        let props = this._element.getProps();
 
-        this._hover.clear();
-        this._hover.beginFill(0xFF0000, .2);
-        this._hover.drawRect(this._spriteMain.x, this._spriteMain.y, this._spriteMain.children[0].width, this._spriteMain.children[0].height);
-        this._hover.endFill();
-
-        let element = this._element;
-        let rect= this._rect;
-        let spriteMain = this._spriteMain;
-        let type = element.getType();
-        let props = element.getProps();
+        hover.clear();
+        hover.beginFill(0xFF0000, .2);
+        hover.drawRect(spriteMain.x, spriteMain.y, spriteMain.children[0].width, spriteMain.children[0].height);
+        hover.endFill();
+        hover.visible = false;
 
         rect.clear();
         rect.beginFill(0x00FF00, 0);
@@ -129,7 +121,10 @@ export default class SpriteMapElement extends Sprite {
         }
         rect.endFill();
 
-        this.addChild(this._spriteMain, this._hover, this._rect);
+        this.addChild(spriteMain, hover, rect);
+        this._spriteMain = spriteMain;
+        this._hover = hover;
+        this._rect = rect;
     }
 
 }

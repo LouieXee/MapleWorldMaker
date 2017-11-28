@@ -11,29 +11,30 @@ export default class MapElement {
     constructor (element) {
         const {
             type,
-            textures,
-            ...opts
+            ...props
         } = element;
 
         this._id = getUniqueId();
         this._x = -9999;
         this._y = -9999;
+        this._texture = null;
         this._type = type;
-        this._textures = textures;
         this._properties = { 
             zIndex: 0,
-            ...opts
+            ...props
         };
 
         this._events = new Events();
+
+        this._init();
     }
 
     getTexture () {
-        return new MapTexture(
-            this._type, 
-            this._handleTextures(this._type, this._textures, this._properties), 
-            this._properties
-        );;
+        return this._texture;
+    }
+
+    toDOM () {
+        return this.getTexture().toCanvas();
     }
 
     setProps (props) {
@@ -62,7 +63,7 @@ export default class MapElement {
         };
     }
 
-    setPostion ({x, y}) {
+    setPosition ({x, y}) {
         this._x = x;
         this._y = y;
     }
@@ -77,32 +78,36 @@ export default class MapElement {
         x = Math.round(x);
         y = Math.round(y);
 
-        let mapTexture = new MapTexture(
-            this._type,
-            this._handleTextures(this._type, this._textures, this._properties),
-            this._properties
-        );
-
-        this._y = y - mapTexture.y;
-        this._x = x - mapTexture.x;
+        this._y = y - this._texture.y;
+        this._x = x - this._texture.x;
 
         return this;
     }
 
-    _handleTextures (type, textures, opt) {
-        if (type == 'ground') {
-            return {
-                ground: TextureCache[textures.main],
-                edge: TextureCache[textures.edge]
-            };
-        } else if (type == 'slope') {
-            return {
-                slope: TextureCache[textures[opt.dir]]
-            };
-        } else if (type == 'wall') {
-            return {
-                wall: TextureCache[textures[opt.dir]]
-            };
+    _init () {
+        switch (this._type) {
+            case 'ground':
+                this._texture = new MapTexture(this._type, {
+                    ground: TextureCache[this._properties.textures.main],
+                    edge: TextureCache[this._properties.textures.edge]
+                }, this._properties);
+                this._properties.edge = 'none';
+                this._properties.size = 1;
+                break;
+            case 'slope':
+                this._texture = new MapTexture(this._type, { slope: TextureCache[this._properties.textures[this._properties.dir]] }, this._properties);
+                this._properties.dir = 'left';
+                this._properties.size = 1;
+                break;
+            case 'wall':
+                this._texture = new MapTexture(this._type, { wall: TextureCache[this._properties.textures[this._properties.dir]] }, this._properties);
+                this._properties.dir = 'left';
+                this._properties.size = 1;
+                break;
+            case 'displayObject':
+                this._texture = new Sprite(TextureCache[this._properties.textures['preview']]);
+                break;
+            case 'sprite':
         }
     }
 

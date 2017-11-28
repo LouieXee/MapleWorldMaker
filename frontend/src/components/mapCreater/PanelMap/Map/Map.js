@@ -6,7 +6,7 @@ import { Event } from '../../../../utils';
 const { Application } = PIXI;
 
 const DISTANCE_TO_ADSORB = 6;
-const MORE_LINE_DISTANCE = 20;
+const MORE_LINE_DISTANCE = 9999;
 
 export default class Map {
 
@@ -85,6 +85,9 @@ export default class Map {
         })
     }
 
+    /*
+        @description 添加辅助线和定位拖拽目标
+    */
     _setLinesAndLocateDragedElement () {
         if (!this._dragedElement) {
             return false;
@@ -126,7 +129,6 @@ export default class Map {
         ];
         let dragedRectBounds = this._dragedElement.getRect().getBounds();
 
-        // 吸附
         for (let target of targets) {
             if (target.id == this._dragedElement.getId()) {
                 continue;
@@ -136,85 +138,98 @@ export default class Map {
                 this._dragedElement.setRectPos({
                     x: target.left
                 })
+
+                lines.push(new SpriteMapLine({
+                    x: target.left,
+                    y: dragedRectBounds.top < target.top ? dragedRectBounds.top : target.top - MORE_LINE_DISTANCE,
+                    targetX: target.left,
+                    targetY: dragedRectBounds.bottom < target.bottom ? target.bottom : dragedRectBounds.bottom + MORE_LINE_DISTANCE
+                }))
             } else if (_isAdsorb(dragedRectBounds.left, target.right)) {
                 this._dragedElement.setRectPos({
                     x: target.right
                 })
+
+                lines.push(new SpriteMapLine({
+                    x: target.right,
+                    y: dragedRectBounds.top < target.top ? dragedRectBounds.top : target.top - MORE_LINE_DISTANCE,
+                    targetX: target.right,
+                    targetY: dragedRectBounds.bottom < target.bottom ? target.bottom : dragedRectBounds.bottom + MORE_LINE_DISTANCE
+                }))
             }
 
             if (_isAdsorb(dragedRectBounds.right, target.left)) {
                 this._dragedElement.setRectPos({
                     x: target.left - dragedRectBounds.width
                 })
+
+                lines.push(new SpriteMapLine({
+                    x: target.left,
+                    y: dragedRectBounds.top < target.top ? dragedRectBounds.top : target.top - MORE_LINE_DISTANCE,
+                    targetX: target.left,
+                    targetY: dragedRectBounds.bottom < target.bottom ? target.bottom : dragedRectBounds.bottom + MORE_LINE_DISTANCE
+                }))
             } else if (_isAdsorb(dragedRectBounds.right, target.right)) {
                 this._dragedElement.setRectPos({
                     x: target.right - dragedRectBounds.width
                 })
+
+                lines.push(new SpriteMapLine({
+                    x: target.right,
+                    y: dragedRectBounds.top < target.top ? dragedRectBounds.top : target.top - MORE_LINE_DISTANCE,
+                    targetX: target.right,
+                    targetY: dragedRectBounds.bottom < target.bottom ? target.bottom : dragedRectBounds.bottom + MORE_LINE_DISTANCE
+                }))
             }
 
             if (_isAdsorb(dragedRectBounds.top, target.top)) {
                 this._dragedElement.setRectPos({
                     y: target.top
                 })
+
+                lines.push(new SpriteMapLine({
+                    x: dragedRectBounds.left < target.left ? dragedRectBounds.left : target.left - MORE_LINE_DISTANCE,
+                    y: target.top,
+                    targetX: dragedRectBounds.right < target.right ? target.right : dragedRectBounds.right + MORE_LINE_DISTANCE,
+                    targetY: target.top
+                }))
             } else if (_isAdsorb(dragedRectBounds.top, target.bottom)) {
                 this._dragedElement.setRectPos({
                     y: target.bottom
                 })
+
+                lines.push(new SpriteMapLine({
+                    x: dragedRectBounds.left < target.left ? dragedRectBounds.left : target.left - MORE_LINE_DISTANCE,
+                    y: target.bottom,
+                    targetX: dragedRectBounds.right < target.right ? target.right : dragedRectBounds.right + MORE_LINE_DISTANCE,
+                    targetY: target.bottom
+                }))
             }
 
             if (_isAdsorb(dragedRectBounds.bottom, target.top)) {
                 this._dragedElement.setRectPos({
                     y: target.top - dragedRectBounds.height
                 })
+
+                lines.push(new SpriteMapLine({
+                    x: dragedRectBounds.left < target.left ? dragedRectBounds.left : target.left - MORE_LINE_DISTANCE,
+                    y: target.top,
+                    targetX: dragedRectBounds.right < target.right ? target.right : dragedRectBounds.right + MORE_LINE_DISTANCE,
+                    targetY: target.top
+                }))
             } else if (_isAdsorb(dragedRectBounds.bottom, target.bottom)) {
                 this._dragedElement.setRectPos({
                     y: target.bottom - dragedRectBounds.height
                 })
-            }
 
-        }
-
-        // 添加辅助线
-        for (let target of targets) {
-            if (target.id == this._dragedElement.getId()) {
-                continue;
-            }
-
-            if (dragedRectBounds.left == target.left || dragedRectBounds.left == target.right) {
-                lines.push(new SpriteMapLine({
-                    x: dragedRectBounds.left,
-                    y: dragedRectBounds.top < target.top ? dragedRectBounds.top : target.top - MORE_LINE_DISTANCE,
-                    targetX: dragedRectBounds.left,
-                    targetY: dragedRectBounds.bottom < target.bottom ? target.bottom : dragedRectBounds.bottom + MORE_LINE_DISTANCE
-                }))
-            }
-
-            if (dragedRectBounds.right == target.left || dragedRectBounds.right == target.right) {
-                lines.push(new SpriteMapLine({
-                    x: dragedRectBounds.right,
-                    y: dragedRectBounds.top < target.top ? dragedRectBounds.top : target.top - MORE_LINE_DISTANCE,
-                    targetX: dragedRectBounds.right,
-                    targetY: dragedRectBounds.bottom < target.bottom ? target.bottom : dragedRectBounds.bottom + MORE_LINE_DISTANCE
-                }))
-            }
-
-            if (dragedRectBounds.top == target.top || dragedRectBounds.top == target.bottom) {
                 lines.push(new SpriteMapLine({
                     x: dragedRectBounds.left < target.left ? dragedRectBounds.left : target.left - MORE_LINE_DISTANCE,
-                    y: dragedRectBounds.top,
+                    y: target.bottom,
                     targetX: dragedRectBounds.right < target.right ? target.right : dragedRectBounds.right + MORE_LINE_DISTANCE,
-                    targetY: dragedRectBounds.top
+                    targetY: target.bottom
                 }))
             }
 
-            if (dragedRectBounds.bottom == target.top || dragedRectBounds.bottom == target.bottom) {
-                lines.push(new SpriteMapLine({
-                    x: dragedRectBounds.left < target.left ? dragedRectBounds.left : target.left - MORE_LINE_DISTANCE,
-                    y: dragedRectBounds.bottom,
-                    targetX: dragedRectBounds.right < target.right ? target.right : dragedRectBounds.right + MORE_LINE_DISTANCE,
-                    targetY: dragedRectBounds.bottom
-                }))
-            }           
         }
 
         this._removeChildrenByTag('lines');
