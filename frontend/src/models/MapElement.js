@@ -87,22 +87,22 @@ export default class MapElement {
     _init () {
         switch (this._type) {
             case 'ground':
+                this._properties.edge = 'none';
+                this._properties.size = 1;
                 this._texture = new MapTexture(this._type, {
                     ground: TextureCache[this._properties.textures.main],
                     edge: TextureCache[this._properties.textures.edge]
                 }, this._properties);
-                this._properties.edge = 'none';
-                this._properties.size = 1;
                 break;
             case 'slope':
-                this._texture = new MapTexture(this._type, { slope: TextureCache[this._properties.textures[this._properties.dir]] }, this._properties);
                 this._properties.dir = 'left';
                 this._properties.size = 1;
+                this._texture = new MapTexture(this._type, { slope: TextureCache[this._properties.textures[this._properties.dir]] }, this._properties);
                 break;
             case 'wall':
-                this._texture = new MapTexture(this._type, { wall: TextureCache[this._properties.textures[this._properties.dir]] }, this._properties);
                 this._properties.dir = 'left';
                 this._properties.size = 1;
+                this._texture = new MapTexture(this._type, { wall: TextureCache[this._properties.textures[this._properties.dir]] }, this._properties);
                 break;
             case 'displayObject':
                 this._texture = new Sprite(TextureCache[this._properties.textures['preview']]);
