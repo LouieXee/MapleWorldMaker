@@ -2,7 +2,7 @@ import { MapTexture } from 'maple-world';
 
 import { getUniqueId, Events } from '../utils';
 
-const { autoDetectRenderer, Container, Sprite, Rectangle } = PIXI;
+const { CanvasRenderer, Container, Sprite, Rectangle } = PIXI;
 const { TextureCache } = PIXI.utils;
 const { TilingSprite } = PIXI.extras;
 
@@ -18,15 +18,16 @@ export default class MapElement {
         this._x = -9999;
         this._y = -9999;
         this._texture = null;
+        this._canvasCache = document.createElement('canvas');
         this._type = type;
-        this._properties = { 
+        this._properties = {
             zIndex: 0,
-            ...props
+            ...this._initDefaultProps(props)
         };
 
         this._events = new Events();
 
-        this._init();
+        this._createTexture();
     }
 
     getTexture () {
@@ -34,7 +35,7 @@ export default class MapElement {
     }
 
     toDOM () {
-        return this.getTexture().toCanvas();
+        return this._canvasCache;
     }
 
     setProps (props) {
@@ -42,6 +43,8 @@ export default class MapElement {
             ...this._properties,
             ...props
         };
+
+        this._createTexture();
     }
 
     getProps () {
@@ -84,31 +87,55 @@ export default class MapElement {
         return this;
     }
 
-    _init () {
+    _initDefaultProps (props) {
         switch (this._type) {
             case 'ground':
-                this._properties.edge = 'none';
-                this._properties.size = 1;
+                return {
+                    edge: 'none',
+                    size: 1,
+                    ...props
+                };
+            case 'wall':
+            case 'slope':
+                return {
+                    dir: 'left',
+                    size: 1,
+                    ...props
+                };
+            case 'displayObject':
+                return { ...props };
+            case 'sprite':
+                return { ...props };
+        }
+    }
+
+    _createTexture () {
+        switch (this._type) {
+            case 'ground':
                 this._texture = new MapTexture(this._type, {
                     ground: TextureCache[this._properties.textures.main],
                     edge: TextureCache[this._properties.textures.edge]
                 }, this._properties);
                 break;
             case 'slope':
-                this._properties.dir = 'left';
-                this._properties.size = 1;
                 this._texture = new MapTexture(this._type, { slope: TextureCache[this._properties.textures[this._properties.dir]] }, this._properties);
                 break;
             case 'wall':
-                this._properties.dir = 'left';
-                this._properties.size = 1;
                 this._texture = new MapTexture(this._type, { wall: TextureCache[this._properties.textures[this._properties.dir]] }, this._properties);
                 break;
             case 'displayObject':
-                this._texture = new Sprite(TextureCache[this._properties.textures['preview']]);
+                this._texture = new Container();
+                this._texture.addChild(new Sprite(TextureCache[this._properties.textures['preview']]));
                 break;
             case 'sprite':
         }
+
+        this._texture.renderCanvas(new CanvasRenderer({
+            width: this._texture.children[0].width,
+            height: this._texture.children[0].height,
+            view: this._canvasCache,
+            transparent: true
+        }));
     }
 
 }
