@@ -238,6 +238,10 @@ export default class Map {
         function _isAdsorb (posA, posB) {
             return Math.abs(posA - posB) <= DISTANCE_TO_ADSORB;
         }
+
+        function _transformPosFromRectPos (element) {
+
+        }
     }
 
 }

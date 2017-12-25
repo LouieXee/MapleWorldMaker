@@ -2,9 +2,6 @@ import 'pixi.js';
 import React from 'react';
 import { Spin } from 'antd';
 
-import displayObject from '../../../res/displayObject.png';
-import sprite from '../../../res/sprite.png';
-
 import PanelMap from '../../components/mapCreater/PanelMap';
 import PanelTypes from '../../components/mapCreater/PanelTypes';
 import PanelProperties from '../../components/mapCreater/PanelProperties';
@@ -34,8 +31,6 @@ export default class PageMapCreater extends React.Component {
 
         loader
         .add(Object.keys(textures).map(key => (textures[key])))
-        .add(displayObject)
-        .add(sprite)
         .load(() => {
             this.setState({
                 isLoading: false
@@ -115,25 +110,36 @@ export default class PageMapCreater extends React.Component {
         let mapComponent = this.panelMap;
         let $container = this.proxyContainer;
         let $proxy = document.createElement('div');
-        let $texture = element.toDOM();
+        let $canvas = element.toDOM();
 
         const handleMouseMove = e => {
             e.preventDefault();
 
-            $proxy.style.left = `${e.clientX - $texture.width / 2}px`;
-            $proxy.style.top = `${e.clientY - $texture.height / 2}px`;
+            $proxy.style.left = `${e.clientX - $canvas.width / 2}px`;
+            $proxy.style.top = `${e.clientY - $canvas.height / 2}px`;
 
-            element.setPosFromDragPos(this._transformPositionFromGlobalToMap($proxy));
+            /**
+             * @description 拖拽得到的坐标转化为实际在地图中的准确坐标
+                            一. 因为图像和逻辑需要, 拖拽得到的坐标和图像显示的坐标是有一定的偏移的;
+                            二. 为了保证鼠标拖拽过程中的拖拽效果, 所以偏移逻辑没有在MapTexture中处理
+                            三. 所有的坐标取整
+             */
+            let { x, y } = this._transformPositionFromGlobalToMap($proxy);
+
+            x = Math.round(x) - element.getTexture().x;
+            y = Math.round(y) - element.getTexture().y;
+
+            element.setPosition({ x, y });
         };
         const handleMouseUp = e => {
             e.preventDefault();
 
-            $proxy.style.left = `${e.clientX - $texture.width / 2}px`;
-            $proxy.style.top = `${e.clientY - $texture.height / 2}px`;
+            $proxy.style.left = `${e.clientX - $canvas.width / 2}px`;
+            $proxy.style.top = `${e.clientY - $canvas.height / 2}px`;
 
             let pos = this._transformPositionFromGlobalToMap($proxy);
 
-            if (pos.x + $texture.width / 2 < 0 || pos.y + $texture.height / 2 < 0 || pos.x + $texture.width / 2 > map.getWidth() || pos.y + $texture.height / 2 > map.getHeight()) {
+            if (pos.x + $canvas.width / 2 < 0 || pos.y + $canvas.height / 2 < 0 || pos.x + $canvas.width / 2 > map.getWidth() || pos.y + $canvas.height / 2 > map.getHeight()) {
                 elements = elements.filter(tmp => ( tmp.getId() != element.getId() ));
 
                 this._elements = elements;
@@ -154,11 +160,11 @@ export default class PageMapCreater extends React.Component {
 
         mapComponent.setDragedElement(element);
 
-        $proxy.appendChild($texture);
+        $proxy.appendChild($canvas);
         $proxy.style = `
             position: fixed;
-            left: -${$texture.width}px;
-            top: -${$texture.height}px;
+            left: -${$canvas.width}px;
+            top: -${$canvas.height}px;
             z-index: 1024;
             opacity: .2;
         `;

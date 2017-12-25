@@ -71,22 +71,6 @@ export default class MapElement {
         this._y = y;
     }
 
-    /*
-        @description 拖拽得到的坐标转化为实际在地图中的准确坐标
-            一. 因为图像和逻辑需要, 拖拽得到的坐标和图像显示的坐标是有一定的偏移的;
-            二. 为了保证鼠标拖拽过程中的拖拽效果, 所以偏移逻辑没有在MapTexture中处理
-            三. 所有的坐标取整
-    */
-    setPosFromDragPos ({x, y}) {
-        x = Math.round(x);
-        y = Math.round(y);
-
-        this._y = y - this._texture.y;
-        this._x = x - this._texture.x;
-
-        return this;
-    }
-
     _initDefaultProps (props) {
         switch (this._type) {
             case 'ground':
@@ -118,21 +102,28 @@ export default class MapElement {
                 }, this._properties);
                 break;
             case 'slope':
-                this._texture = new MapTexture(this._type, { slope: TextureCache[this._properties.textures[this._properties.dir]] }, this._properties);
+                this._texture = new MapTexture(this._type, { 
+                    slope: TextureCache[this._properties.textures[this._properties.dir]] 
+                }, this._properties);
                 break;
             case 'wall':
-                this._texture = new MapTexture(this._type, { wall: TextureCache[this._properties.textures[this._properties.dir]] }, this._properties);
-                break;
-            case 'displayObject':
-                this._texture = new Container();
-                this._texture.addChild(new Sprite(TextureCache[this._properties.textures['preview']]));
+                this._texture = new MapTexture(this._type, {
+                    wall: TextureCache[this._properties.textures[this._properties.dir]] 
+                }, this._properties);
                 break;
             case 'sprite':
+            case 'displayObject':
+                this._texture = new Sprite(TextureCache[this._properties.textures.main]);
+                break;
         }
 
-        this._texture.renderCanvas(new CanvasRenderer({
-            width: this._texture.children[0].width,
-            height: this._texture.children[0].height,
+        // 为了能准确访问的宽高而不是缩放比例
+        let temp = new Container();
+
+        temp.addChild(this._texture);
+        temp.renderCanvas(new CanvasRenderer({
+            width: temp.width,
+            height: temp.height,
             view: this._canvasCache,
             transparent: true
         }));

@@ -1,3 +1,6 @@
+import displayObject from '../../res/displayObject.png';
+import sprite from '../../res/sprite.png';
+
 export default class Map {
 
     constructor (opt = {}) {
@@ -27,7 +30,11 @@ export default class Map {
 
         this._width = width;
         this._height = height;
-        this._textures = textures;
+        this._textures = {
+            ...textures,
+            displayObject,
+            sprite
+        };
         this._types = [
             {
                 type: 'ground',
@@ -59,6 +66,14 @@ export default class Map {
                 },
                 wallHeight,
                 groundHeight
+            },
+            {
+                type: 'displayObject',
+                textures: { main: displayObject }
+            },
+            {
+                type: 'sprite', 
+                textures: { main: sprite }
             }
         ];
     }
