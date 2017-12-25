@@ -1,7 +1,7 @@
 import SpriteMapElement from './SpriteMapElement';
 import SpriteMapLine from './SpriteMapLine';
 
-import { Event } from '../../../../utils';
+import { Event, isNumber } from '../../../../utils';
 
 const { Application } = PIXI;
 
@@ -237,10 +237,6 @@ export default class Map {
 
         function _isAdsorb (posA, posB) {
             return Math.abs(posA - posB) <= DISTANCE_TO_ADSORB;
-        }
-
-        function _transformPosFromRectPos (element) {
-
         }
     }
 

@@ -2,7 +2,7 @@ import { MapTexture } from 'maple-world';
 
 import { getUniqueId, Events } from '../utils';
 
-const { CanvasRenderer, Container, Sprite, Rectangle } = PIXI;
+const { CanvasRenderer, Container, Sprite, Rectangle, Graphics } = PIXI;
 const { TextureCache } = PIXI.utils;
 const { TilingSprite } = PIXI.extras;
 
@@ -18,6 +18,7 @@ export default class MapElement {
         this._x = -9999;
         this._y = -9999;
         this._texture = null;
+        this._rectToCompared = new Graphics();
         this._canvasCache = document.createElement('canvas');
         this._type = type;
         this._properties = {
@@ -28,6 +29,7 @@ export default class MapElement {
         this._events = new Events();
 
         this._createTexture();
+        this._createRectToCompared();
     }
 
     getTexture () {
@@ -45,6 +47,7 @@ export default class MapElement {
         };
 
         this._createTexture();
+        this._createRectToCompared();
     }
 
     getProps () {
@@ -69,6 +72,10 @@ export default class MapElement {
     setPosition ({x, y}) {
         this._x = x;
         this._y = y;
+    }
+
+    getRectToCompared () {
+        return this._rectToCompared;
     }
 
     _initDefaultProps (props) {
@@ -127,6 +134,43 @@ export default class MapElement {
             view: this._canvasCache,
             transparent: true
         }));
+    }
+
+    /**
+     * TODO 获取比较位置的矩形有点生硬, 应该还可以优化
+     */
+    _createRectToCompared () {
+        let texture = this._texture;
+        let rect = this._rectToCompared;
+        let temp = null;
+
+        rect.clear();
+        rect.beginFill(0x00FF00, 0);
+
+        switch (this._type) {
+            case 'ground':
+                temp = texture.children[0].children[0];
+
+                rect.drawRect(0, 0, temp.width, temp.height + texture.y);
+                rect.x = temp.x;
+                break;
+            case 'slope': 
+                temp = texture.children[0];
+                rect.drawRect(0, 0, temp.width, temp.height);
+                break;
+            case 'wall': 
+                temp = texture.children[0];
+                rect.drawRect(0, 0, 0, temp.height);
+                rect.y = texture.y;   
+                break;
+            case 'displayObject':
+            case 'sprite':
+                temp = new Container();
+                temp.addChild(texture);
+                rect.drawRect(0, 0, temp.width, temp.height);
+        }
+
+        rect.endFill();
     }
 
 }

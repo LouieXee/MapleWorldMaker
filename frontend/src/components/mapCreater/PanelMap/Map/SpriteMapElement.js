@@ -1,6 +1,6 @@
 import { isNumber } from '../../../../utils';
 
-const { Sprite, Texture, Graphics } = PIXI;
+const { Container, Sprite, Texture, Graphics } = PIXI;
 const { TextureCache, uid } = PIXI.utils;
 
 // 区别点击事件
@@ -66,7 +66,7 @@ export default class SpriteMapElement extends Sprite {
 
     _bind () {
         let timeoutId = 0;
-        let { _spriteMain, _hover, _element } = this;
+        let { _hover, _element } = this;
 
         this.interactive = true;
         this.cursor = '-webkit-grab';
@@ -90,39 +90,21 @@ export default class SpriteMapElement extends Sprite {
     }
 
     _setTexture () {
-        let spriteMain = this._element.getTexture(); // 图片资源
-        let hover = new Graphics();                  // 鼠标悬浮区域
-        let rect = new Graphics();                   // 位置对比区域
-        let type = this._element.getType();
-        let props = this._element.getProps();
+        let texture = this._element.getTexture();     // 图片资源
+        let rect = this._element.getRectToCompared(); // 获取比较区域用的矩形
+        let hover = new Graphics();                   // 鼠标悬浮区域
+
+        let tempHover = new Container();
+        tempHover.addChild(texture);
 
         hover.clear();
         hover.beginFill(0xFF0000, .2);
-        hover.drawRect(spriteMain.x, spriteMain.y, spriteMain.children[0].width, spriteMain.children[0].height);
+        hover.drawRect(texture.x, texture.y, tempHover.width, tempHover.height);
         hover.endFill();
         hover.visible = false;
 
-        rect.clear();
-        rect.beginFill(0x00FF00, 0);
-        if (type == 'ground') {
-            let main = spriteMain.children[0].children[0];
-
-            rect.drawRect(0, 0, main.width, main.height + spriteMain.y);
-            rect.x = main.x;
-        } else if (type == 'slope') {
-            let main = spriteMain.children[0];
-
-            rect.drawRect(0, 0, main.width, main.height);
-        } else if (type == 'wall') {
-            let main = spriteMain.children[0];
-
-            rect.drawRect(0, 0, 0, main.height);
-            rect.y = spriteMain.y;
-        }
-        rect.endFill();
-
-        this.addChild(spriteMain, hover, rect);
-        this._spriteMain = spriteMain;
+        this.addChild(texture, hover, rect);
+        this._elementTexture = texture;
         this._hover = hover;
         this._rect = rect;
     }
